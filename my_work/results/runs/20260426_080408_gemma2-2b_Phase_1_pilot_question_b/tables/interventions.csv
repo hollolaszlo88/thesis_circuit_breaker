@@ -1,0 +1,17 @@
+run_id,id,label,intervention,n_features,margin_before,margin_after,delta_margin,predicted_before,predicted_after,flipped
+20260426_080408_gemma2-2b_Phase_1_pilot_question_b,TI-01,True,amplify_5x,10,2.125,2.0,-0.125,True,True,False
+20260426_080408_gemma2-2b_Phase_1_pilot_question_b,TI-01,True,ablate,10,2.125,2.0,-0.125,True,True,False
+20260426_080408_gemma2-2b_Phase_1_pilot_question_b,TI-02,False,amplify_5x,10,1.875,2.0,0.125,True,True,False
+20260426_080408_gemma2-2b_Phase_1_pilot_question_b,TI-02,False,ablate,10,1.875,1.875,0.0,True,True,False
+20260426_080408_gemma2-2b_Phase_1_pilot_question_b,TI-03,True,amplify_5x,10,2.125,1.875,-0.25,True,True,False
+20260426_080408_gemma2-2b_Phase_1_pilot_question_b,TI-03,True,ablate,10,2.125,2.0,-0.125,True,True,False
+20260426_080408_gemma2-2b_Phase_1_pilot_question_b,TI-04,False,amplify_5x,9,2.0,2.0,0.0,True,True,False
+20260426_080408_gemma2-2b_Phase_1_pilot_question_b,TI-04,False,ablate,9,2.0,2.0,0.0,True,True,False
+20260426_080408_gemma2-2b_Phase_1_pilot_question_b,TI-05,True,amplify_5x,9,1.75,1.875,0.125,True,True,False
+20260426_080408_gemma2-2b_Phase_1_pilot_question_b,TI-05,True,ablate,9,1.75,1.75,0.0,True,True,False
+20260426_080408_gemma2-2b_Phase_1_pilot_question_b,TI-06,False,amplify_5x,10,1.625,1.875,0.25,True,True,False
+20260426_080408_gemma2-2b_Phase_1_pilot_question_b,TI-06,False,ablate,10,1.625,1.75,0.125,True,True,False
+20260426_080408_gemma2-2b_Phase_1_pilot_question_b,TI-07,True,amplify_5x,9,2.0,2.0,0.0,True,True,False
+20260426_080408_gemma2-2b_Phase_1_pilot_question_b,TI-07,True,ablate,9,2.0,1.875,-0.125,True,True,False
+20260426_080408_gemma2-2b_Phase_1_pilot_question_b,TI-08,False,amplify_5x,9,2.25,2.125,-0.125,True,True,False
+20260426_080408_gemma2-2b_Phase_1_pilot_question_b,TI-08,False,ablate,9,2.25,2.25,0.0,True,True,False

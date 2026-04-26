@@ -1,0 +1,17 @@
+id,template,label,logit_true,logit_false,margin,predicted,correct
+TI-01,T1,True,25.25,24.375,0.875,True,True
+TI-01,T2,True,24.0,22.0,2.0,True,True
+TI-02,T1,False,25.25,24.75,0.5,True,False
+TI-02,T2,False,24.0,22.125,1.875,True,False
+TI-03,T1,True,25.25,24.125,1.125,True,True
+TI-03,T2,True,24.125,22.125,2.0,True,True
+TI-04,T1,False,25.375,25.125,0.25,True,False
+TI-04,T2,False,24.0,22.0,2.0,True,False
+TI-05,T1,True,25.375,25.125,0.25,True,True
+TI-05,T2,True,23.875,22.125,1.75,True,True
+TI-06,T1,False,25.625,25.25,0.375,True,False
+TI-06,T2,False,24.125,22.375,1.75,True,False
+TI-07,T1,True,24.375,23.5,0.875,True,True
+TI-07,T2,True,23.5,21.5,2.0,True,True
+TI-08,T1,False,26.0,25.5,0.5,True,False
+TI-08,T2,False,24.375,22.125,2.25,True,False

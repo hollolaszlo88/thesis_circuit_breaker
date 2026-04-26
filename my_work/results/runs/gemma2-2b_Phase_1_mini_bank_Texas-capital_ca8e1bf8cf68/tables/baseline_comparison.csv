@@ -1,0 +1,6 @@
+id,template,label,margin_replacement,margin_raw,predicted_replacement,predicted_raw,agree_prediction,delta_margin_repl_minus_raw
+TX-01,T1,True,1.875,1.875,True,True,True,0.0
+TX-02,T1,False,1.875,2.0,True,True,True,-0.125
+TX-03,T1,True,2.25,2.25,True,True,True,0.0
+TX-04,T1,True,1.875,1.875,True,True,True,0.0
+TX-05,T1,False,1.75,1.875,True,True,True,-0.125

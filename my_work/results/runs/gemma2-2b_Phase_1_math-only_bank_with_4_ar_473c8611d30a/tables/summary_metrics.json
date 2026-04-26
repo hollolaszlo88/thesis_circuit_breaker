@@ -1,0 +1,48 @@
+{
+  "run_id": "gemma2-2b_Phase_1_math-only_bank_with_4_ar_473c8611d30a",
+  "model": "google/gemma-2-2b",
+  "transcoder": "gemma",
+  "backend": "transformerlens",
+  "active_template": "T1",
+  "n_questions": 20,
+  "accuracy_by_template": {
+    "T1": {
+      "correct": 10,
+      "total": 20,
+      "pct": 50.0
+    }
+  },
+  "n_recurring_features": 10,
+  "intervention_summary": {
+    "group_aligned_amplify_5x": {
+      "avg_delta_margin": 0.0063,
+      "n_flipped": 0,
+      "total": 20
+    },
+    "group_aligned_ablate": {
+      "avg_delta_margin": 0.0125,
+      "n_flipped": 0,
+      "total": 20
+    },
+    "group_opposed_amplify_5x": {
+      "avg_delta_margin": 0.0125,
+      "n_flipped": 0,
+      "total": 20
+    },
+    "group_opposed_ablate": {
+      "avg_delta_margin": 0.0063,
+      "n_flipped": 0,
+      "total": 20
+    },
+    "single_aligned_amplify_5x": {
+      "avg_delta_margin": -0.0583,
+      "n_flipped": 0,
+      "total": 30
+    },
+    "single_aligned_ablate": {
+      "avg_delta_margin": -0.0083,
+      "n_flipped": 0,
+      "total": 30
+    }
+  }
+}

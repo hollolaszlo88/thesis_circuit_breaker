@@ -1,0 +1,62 @@
+{
+  "attribution": {
+    "batch_size": 128,
+    "max_feature_nodes": 8192,
+    "offload": "disk",
+    "verbose": true
+  },
+  "fingerprint_version": 1,
+  "model": {
+    "backend": "transformerlens",
+    "dtype": "bfloat16",
+    "name": "google/gemma-2-2b",
+    "transcoder": "gemma"
+  },
+  "question_bank": {
+    "metadata": {
+      "active_template": "T1",
+      "description": "Texas capital token friendly",
+      "version": "1.0"
+    },
+    "questions": [
+      {
+        "category": "capital_reasoning",
+        "id": "TX-01",
+        "label": true,
+        "notes": "Directly mirrors the runpod baseline pattern with the correct completion.",
+        "statement": "Fact: the capital of the state containing Dallas is Austin."
+      },
+      {
+        "category": "capital_reasoning",
+        "id": "TX-02",
+        "label": false,
+        "notes": "Same pattern, incorrect city.",
+        "statement": "Fact: the capital of the state containing Dallas is Houston."
+      },
+      {
+        "category": "capital_reasoning",
+        "id": "TX-03",
+        "label": true,
+        "notes": "Intermediate hop in the Dallas -> Texas -> Austin reasoning chain.",
+        "statement": "Dallas is in Texas."
+      },
+      {
+        "category": "capital_reasoning",
+        "id": "TX-04",
+        "label": true,
+        "notes": "Canonical capital fact in plain form.",
+        "statement": "Austin is the capital of Texas."
+      },
+      {
+        "category": "capital_reasoning",
+        "id": "TX-05",
+        "label": false,
+        "notes": "Simple contradiction to test false handling.",
+        "statement": "Texas has no capital city."
+      }
+    ],
+    "templates": {
+      "T1": "Statement: {S}\nAnswer:"
+    }
+  }
+}

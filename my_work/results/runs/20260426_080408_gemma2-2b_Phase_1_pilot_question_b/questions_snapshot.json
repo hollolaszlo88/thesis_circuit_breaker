@@ -1,0 +1,70 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "description": "Phase 1 pilot question bank — triangle inequality. Edit this file to add, remove, or replace questions. The notebook loads it at runtime, so no notebook changes are needed when updating the question set.",
+    "active_template": "T1"
+  },
+  "templates": {
+    "T1": "Statement: \"{S}\"\nAnswer with exactly one word: True or False.",
+    "T2": "Is the following statement true?\n\"{S}\"\nAnswer: True or False.",
+    "T3": "Evaluate the claim below.\nClaim: \"{S}\"\nOutput exactly one token: True or False."
+  },
+  "questions": [
+    {
+      "id": "TI-01",
+      "category": "triangle_inequality",
+      "statement": "For any triangle, the sum of any two sides is greater than the third side.",
+      "label": true,
+      "notes": "Canonical strict form — the standard textbook statement of the triangle inequality."
+    },
+    {
+      "id": "TI-02",
+      "category": "triangle_inequality",
+      "statement": "For any triangle, the sum of any two sides is less than the third side.",
+      "label": false,
+      "notes": "Direct negation of the canonical form — exactly the opposite inequality."
+    },
+    {
+      "id": "TI-03",
+      "category": "triangle_inequality",
+      "statement": "For any triangle, the sum of any two sides is greater than or equal to the third side.",
+      "label": true,
+      "notes": "Weak inequality form (>=). Still true because strict > implies >=. Tests whether the model is sensitive to the boundary wording."
+    },
+    {
+      "id": "TI-04",
+      "category": "triangle_inequality",
+      "statement": "In a triangle, it is possible for one side to be longer than the sum of the other two sides.",
+      "label": false,
+      "notes": "Existential violation claim — directly asserts the impossibility condition as possible."
+    },
+    {
+      "id": "TI-05",
+      "category": "triangle_inequality",
+      "statement": "In every triangle, each side must be shorter than the combined length of the other two sides.",
+      "label": true,
+      "notes": "Paraphrase using 'shorter than combined length' instead of 'sum greater than'. Tests surface-form sensitivity."
+    },
+    {
+      "id": "TI-06",
+      "category": "triangle_inequality",
+      "statement": "For any triangle with sides a, b, and c, the inequality a + b ≤ c can hold.",
+      "label": false,
+      "notes": "Uses mathematical notation with <= operator. False because a + b > c is required."
+    },
+    {
+      "id": "TI-07",
+      "category": "triangle_inequality",
+      "statement": "Three line segments can form a triangle only if each segment is less than the sum of the other two.",
+      "label": true,
+      "notes": "Framed as a necessary condition for triangle existence rather than a property of all triangles."
+    },
+    {
+      "id": "TI-08",
+      "category": "triangle_inequality",
+      "statement": "The triangle inequality states that the sum of two sides of a triangle is always less than the third.",
+      "label": false,
+      "notes": "Misattributes an incorrect rule to the named theorem — tests whether the model recognises the correct theorem content."
+    }
+  ]
+}

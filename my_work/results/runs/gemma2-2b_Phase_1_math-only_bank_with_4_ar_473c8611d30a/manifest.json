@@ -1,0 +1,23 @@
+{
+  "run_id": "gemma2-2b_Phase_1_math-only_bank_with_4_ar_473c8611d30a",
+  "timestamp_utc": "2026-04-26T12:33:38.053079+00:00",
+  "git_sha": "053a89c",
+  "notebook": "1_run_attribution.ipynb",
+  "model_name": "google/gemma-2-2b",
+  "transcoder_name": "gemma",
+  "backend": "transformerlens",
+  "dtype": "bfloat16",
+  "active_template": "T1",
+  "n_questions": 20,
+  "attr_batch_size": 128,
+  "attr_max_feature_nodes": 8192,
+  "attr_offload": "disk",
+  "recurring_threshold": 3,
+  "top_k_intervention": 10,
+  "top_n_features": 20,
+  "config_path": "/workspace/thesis_circuit_breaker/my_work/data/questions_math.json",
+  "results_root": "/workspace/thesis_circuit_breaker/my_work/results/runs/gemma2-2b_Phase_1_math-only_bank_with_4_ar_473c8611d30a",
+  "run_config_snapshot": "run_config_snapshot.json",
+  "fingerprint_config_hash12": "473c8611d30a",
+  "fingerprint_version": 1
+}

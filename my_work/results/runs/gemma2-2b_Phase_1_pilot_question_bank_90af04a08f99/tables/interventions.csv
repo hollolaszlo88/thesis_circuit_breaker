@@ -1,0 +1,57 @@
+run_id,id,label,intervention,scope,direction,feature_key,margin_before,margin_after,delta_margin,predicted_before,predicted_after,flipped
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-01,True,amplify_5x,group,aligned,,2.125,2.0,-0.125,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-01,True,ablate,group,aligned,,2.125,2.0,-0.125,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-01,True,amplify_5x,group,opposed,,2.125,2.125,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-01,True,ablate,group,opposed,,2.125,2.125,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-01,True,amplify_5x,single,aligned,"(0, 2, 16200)",2.125,1.625,-0.5,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-01,True,ablate,single,aligned,"(0, 2, 16200)",2.125,1.875,-0.25,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-01,True,amplify_5x,single,aligned,"(0, 1, 16229)",2.125,2.0,-0.125,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-01,True,ablate,single,aligned,"(0, 1, 16229)",2.125,2.0,-0.125,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-01,True,amplify_5x,single,aligned,"(1, 1, 11660)",2.125,1.75,-0.375,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-01,True,ablate,single,aligned,"(1, 1, 11660)",2.125,2.0,-0.125,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-02,False,amplify_5x,group,aligned,,1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-02,False,ablate,group,aligned,,1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-02,False,amplify_5x,group,opposed,,1.875,2.0,0.125,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-02,False,ablate,group,opposed,,1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-03,True,amplify_5x,group,aligned,,2.125,1.875,-0.25,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-03,True,ablate,group,aligned,,2.125,2.0,-0.125,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-03,True,amplify_5x,group,opposed,,2.125,2.125,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-03,True,ablate,group,opposed,,2.125,2.125,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-03,True,amplify_5x,single,aligned,"(0, 2, 16200)",2.125,1.75,-0.375,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-03,True,ablate,single,aligned,"(0, 2, 16200)",2.125,2.0,-0.125,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-03,True,amplify_5x,single,aligned,"(0, 1, 16229)",2.125,2.125,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-03,True,ablate,single,aligned,"(0, 1, 16229)",2.125,2.0,-0.125,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-03,True,amplify_5x,single,aligned,"(1, 1, 11660)",2.125,1.875,-0.25,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-03,True,ablate,single,aligned,"(1, 1, 11660)",2.125,2.0,-0.125,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-04,False,amplify_5x,group,aligned,,2.0,2.0,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-04,False,ablate,group,aligned,,2.0,2.0,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-04,False,amplify_5x,group,opposed,,2.0,1.875,-0.125,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-04,False,ablate,group,opposed,,2.0,2.0,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-05,True,amplify_5x,group,aligned,,1.75,1.875,0.125,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-05,True,ablate,group,aligned,,1.75,1.75,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-05,True,amplify_5x,group,opposed,,1.75,1.75,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-05,True,ablate,group,opposed,,1.75,1.75,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-05,True,amplify_5x,single,aligned,"(0, 2, 16200)",1.75,1.625,-0.125,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-05,True,ablate,single,aligned,"(0, 2, 16200)",1.75,1.75,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-05,True,amplify_5x,single,aligned,"(0, 1, 16229)",1.75,1.75,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-05,True,ablate,single,aligned,"(0, 1, 16229)",1.75,1.75,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-05,True,amplify_5x,single,aligned,"(1, 1, 11660)",1.75,1.625,-0.125,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-05,True,ablate,single,aligned,"(1, 1, 11660)",1.75,1.75,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-06,False,amplify_5x,group,aligned,,1.625,1.625,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-06,False,ablate,group,aligned,,1.625,1.625,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-06,False,amplify_5x,group,opposed,,1.625,1.875,0.25,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-06,False,ablate,group,opposed,,1.625,1.625,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-07,True,amplify_5x,group,aligned,,2.0,2.125,0.125,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-07,True,ablate,group,aligned,,2.0,1.875,-0.125,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-07,True,amplify_5x,group,opposed,,2.0,2.0,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-07,True,ablate,group,opposed,,2.0,2.0,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-07,True,amplify_5x,single,aligned,"(0, 2, 16200)",2.0,1.75,-0.25,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-07,True,ablate,single,aligned,"(0, 2, 16200)",2.0,2.0,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-07,True,amplify_5x,single,aligned,"(0, 1, 16229)",2.0,2.0,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-07,True,ablate,single,aligned,"(0, 1, 16229)",2.0,2.0,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-07,True,amplify_5x,single,aligned,"(1, 1, 11660)",2.0,1.625,-0.375,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-07,True,ablate,single,aligned,"(1, 1, 11660)",2.0,2.0,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-08,False,amplify_5x,group,aligned,,2.25,2.25,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-08,False,ablate,group,aligned,,2.25,2.25,0.0,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-08,False,amplify_5x,group,opposed,,2.25,2.125,-0.125,True,True,False
+gemma2-2b_Phase_1_pilot_question_bank_90af04a08f99,TI-08,False,ablate,group,opposed,,2.25,2.25,0.0,True,True,False

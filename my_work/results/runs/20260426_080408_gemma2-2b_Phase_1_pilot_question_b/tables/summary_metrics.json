@@ -1,0 +1,38 @@
+{
+  "run_id": "20260426_080408_gemma2-2b_Phase_1_pilot_question_b",
+  "model": "google/gemma-2-2b",
+  "transcoder": "gemma",
+  "backend": "transformerlens",
+  "active_template": "T1",
+  "n_questions": 8,
+  "accuracy_by_template": {
+    "T1": {
+      "correct": 4,
+      "total": 8,
+      "pct": 50.0
+    },
+    "T2": {
+      "correct": 4,
+      "total": 8,
+      "pct": 50.0
+    },
+    "T3": {
+      "correct": 4,
+      "total": 8,
+      "pct": 50.0
+    }
+  },
+  "n_recurring_features": 10,
+  "intervention_summary": {
+    "amplify_5x": {
+      "avg_delta_margin": 0.0,
+      "n_flipped": 0,
+      "total": 8
+    },
+    "ablate": {
+      "avg_delta_margin": -0.0312,
+      "n_flipped": 0,
+      "total": 8
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "run_id": "gemma2-2b_Triangle_inequality_token_friend_4f7452b194d0",
+  "model": "google/gemma-2-2b",
+  "transcoder": "gemma",
+  "backend": "transformerlens",
+  "active_template": "T1",
+  "n_questions": 8,
+  "accuracy_by_template": {
+    "T1": {
+      "correct": 4,
+      "total": 8,
+      "pct": 50.0
+    },
+    "T2": {
+      "correct": 4,
+      "total": 8,
+      "pct": 50.0
+    }
+  },
+  "n_recurring_features": 10,
+  "intervention_summary": {
+    "group_aligned_amplify_2x": {
+      "avg_delta_margin": -0.2812,
+      "n_flipped": 1,
+      "total": 8
+    },
+    "group_aligned_amplify_5x": {
+      "avg_delta_margin": -0.2188,
+      "n_flipped": 0,
+      "total": 8
+    },
+    "group_aligned_ablate": {
+      "avg_delta_margin": -0.1094,
+      "n_flipped": 0,
+      "total": 8
+    },
+    "group_opposed_amplify_2x": {
+      "avg_delta_margin": -0.2344,
+      "n_flipped": 3,
+      "total": 8
+    },
+    "group_opposed_amplify_5x": {
+      "avg_delta_margin": -0.0938,
+      "n_flipped": 2,
+      "total": 8
+    },
+    "group_opposed_ablate": {
+      "avg_delta_margin": -0.0938,
+      "n_flipped": 1,
+      "total": 8
+    },
+    "single_aligned_amplify_2x": {
+      "avg_delta_margin": -0.0729,
+      "n_flipped": 1,
+      "total": 12
+    },
+    "single_aligned_amplify_5x": {
+      "avg_delta_margin": -0.4271,
+      "n_flipped": 3,
+      "total": 12
+    },
+    "single_aligned_ablate": {
+      "avg_delta_margin": -0.0938,
+      "n_flipped": 0,
+      "total": 12
+    }
+  }
+}

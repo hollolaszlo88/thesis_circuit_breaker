@@ -1,0 +1,167 @@
+{
+  "attribution": {
+    "batch_size": 128,
+    "max_feature_nodes": 8192,
+    "offload": "disk",
+    "verbose": true
+  },
+  "fingerprint_version": 1,
+  "model": {
+    "backend": "transformerlens",
+    "dtype": "bfloat16",
+    "name": "google/gemma-2-2b",
+    "transcoder": "gemma"
+  },
+  "question_bank": {
+    "metadata": {
+      "active_template": "T1",
+      "description": "Phase 1 math-only bank with 4 arithmetic probes and triangle geometry focus.",
+      "version": "1.1"
+    },
+    "questions": [
+      {
+        "category": "arithmetic",
+        "id": "M-01",
+        "label": true,
+        "notes": "Basic arithmetic control.",
+        "statement": "1 + 1 = 2."
+      },
+      {
+        "category": "arithmetic",
+        "id": "M-02",
+        "label": false,
+        "notes": "Simple false arithmetic probe.",
+        "statement": "1 + 1 = 3."
+      },
+      {
+        "category": "arithmetic",
+        "id": "M-03",
+        "label": true,
+        "notes": "Basic multiplication control.",
+        "statement": "3 * 4 = 12."
+      },
+      {
+        "category": "arithmetic",
+        "id": "M-04",
+        "label": false,
+        "notes": "Simple subtraction false case.",
+        "statement": "9 - 2 = 10."
+      },
+      {
+        "category": "triangle_geometry",
+        "id": "M-05",
+        "label": true,
+        "notes": "Core definition.",
+        "statement": "A triangle has three sides."
+      },
+      {
+        "category": "triangle_geometry",
+        "id": "M-06",
+        "label": false,
+        "notes": "Negated definition.",
+        "statement": "A triangle has four sides."
+      },
+      {
+        "category": "triangle_geometry",
+        "id": "M-07",
+        "label": true,
+        "notes": "Standard Euclidean fact.",
+        "statement": "The sum of interior angles of a triangle is 180 degrees in Euclidean geometry."
+      },
+      {
+        "category": "triangle_geometry",
+        "id": "M-08",
+        "label": false,
+        "notes": "Common false claim.",
+        "statement": "The sum of interior angles of a triangle is 360 degrees in Euclidean geometry."
+      },
+      {
+        "category": "triangle_geometry",
+        "id": "M-09",
+        "label": true,
+        "notes": "Definition of equilateral triangle.",
+        "statement": "An equilateral triangle has all three sides equal."
+      },
+      {
+        "category": "triangle_geometry",
+        "id": "M-10",
+        "label": false,
+        "notes": "Confuses equilateral with isosceles.",
+        "statement": "An equilateral triangle has exactly two equal sides."
+      },
+      {
+        "category": "triangle_geometry",
+        "id": "M-11",
+        "label": true,
+        "notes": "Definition of right triangle.",
+        "statement": "A right triangle has one angle equal to 90 degrees."
+      },
+      {
+        "category": "triangle_geometry",
+        "id": "M-12",
+        "label": false,
+        "notes": "Impossible in Euclidean triangles.",
+        "statement": "A right triangle has two angles equal to 90 degrees."
+      },
+      {
+        "category": "triangle_geometry",
+        "id": "M-13",
+        "label": true,
+        "notes": "Standard isosceles property.",
+        "statement": "In an isosceles triangle, the base angles are equal."
+      },
+      {
+        "category": "triangle_geometry",
+        "id": "M-14",
+        "label": false,
+        "notes": "Contradicts isosceles angle property.",
+        "statement": "In an isosceles triangle, all three angles must be different."
+      },
+      {
+        "category": "triangle_geometry",
+        "id": "M-15",
+        "label": true,
+        "notes": "Triangle inequality.",
+        "statement": "In any triangle, the sum of lengths of any two sides is greater than the third side."
+      },
+      {
+        "category": "triangle_geometry",
+        "id": "M-16",
+        "label": false,
+        "notes": "Violates triangle inequality.",
+        "statement": "In some triangle, one side can be longer than the sum of the other two sides."
+      },
+      {
+        "category": "triangle_geometry",
+        "id": "M-17",
+        "label": true,
+        "notes": "Definition of obtuse triangle.",
+        "statement": "An obtuse triangle has one angle greater than 90 degrees."
+      },
+      {
+        "category": "triangle_geometry",
+        "id": "M-18",
+        "label": false,
+        "notes": "Opposite of obtuse definition.",
+        "statement": "An obtuse triangle has all angles less than 90 degrees."
+      },
+      {
+        "category": "triangle_geometry",
+        "id": "M-19",
+        "label": true,
+        "notes": "Standard area formula.",
+        "statement": "The area of a triangle can be computed as 0.5 times base times height."
+      },
+      {
+        "category": "triangle_geometry",
+        "id": "M-20",
+        "label": false,
+        "notes": "Missing the one-half factor.",
+        "statement": "The area of a triangle is always equal to base times height."
+      }
+    ],
+    "templates": {
+      "T1": "Statement: \"{S}\"\nAnswer with exactly one word: True or False."
+    }
+  }
+}

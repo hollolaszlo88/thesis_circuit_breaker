@@ -1,0 +1,6 @@
+id,template,label,logit_true_raw,logit_false_raw,margin_raw,predicted_raw,correct_raw
+TX-01,T1,True,26.875,26.875,0.0,False,False
+TX-02,T1,False,26.875,27.125,-0.25,False,True
+TX-03,T1,True,26.75,25.5,1.25,True,True
+TX-04,T1,True,26.625,25.5,1.125,True,True
+TX-05,T1,False,26.5,26.0,0.5,True,False

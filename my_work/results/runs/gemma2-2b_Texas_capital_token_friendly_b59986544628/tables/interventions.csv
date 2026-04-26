@@ -1,0 +1,39 @@
+run_id,id,label,intervention,scope,direction,feature_key,margin_before,margin_after,delta_margin,predicted_before,predicted_after,flipped
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-01,True,amplify_5x,group,aligned,,0.0,-0.125,-0.125,False,False,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-01,True,ablate,group,aligned,,0.0,-0.375,-0.375,False,False,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-01,True,amplify_5x,group,opposed,,0.0,0.0,0.0,False,False,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-01,True,ablate,group,opposed,,0.0,0.0,0.0,False,False,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-01,True,amplify_5x,single,aligned,"(0, 2, 16200)",0.0,-0.25,-0.25,False,False,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-01,True,ablate,single,aligned,"(0, 2, 16200)",0.0,-0.25,-0.25,False,False,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-01,True,amplify_5x,single,aligned,"(0, 1, 16229)",0.0,-0.375,-0.375,False,False,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-01,True,ablate,single,aligned,"(0, 1, 16229)",0.0,-0.125,-0.125,False,False,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-01,True,amplify_5x,single,aligned,"(0, 1, 6083)",0.0,0.0,0.0,False,False,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-01,True,ablate,single,aligned,"(0, 1, 6083)",0.0,-0.125,-0.125,False,False,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-02,False,amplify_5x,group,aligned,,-0.125,-0.125,0.0,False,False,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-02,False,ablate,group,aligned,,-0.125,-0.125,0.0,False,False,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-02,False,amplify_5x,group,opposed,,-0.125,-0.375,-0.25,False,False,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-02,False,ablate,group,opposed,,-0.125,-0.375,-0.25,False,False,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-03,True,amplify_5x,group,aligned,,1.25,0.875,-0.375,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-03,True,ablate,group,aligned,,1.25,1.0,-0.25,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-03,True,amplify_5x,group,opposed,,1.25,1.25,0.0,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-03,True,ablate,group,opposed,,1.25,1.25,0.0,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-03,True,amplify_5x,single,aligned,"(0, 2, 16200)",1.25,1.25,0.0,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-03,True,ablate,single,aligned,"(0, 2, 16200)",1.25,1.125,-0.125,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-03,True,amplify_5x,single,aligned,"(1, 1, 11660)",1.25,0.875,-0.375,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-03,True,ablate,single,aligned,"(1, 1, 11660)",1.25,1.375,0.125,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-03,True,amplify_5x,single,aligned,"(0, 1, 16229)",1.25,0.75,-0.5,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-03,True,ablate,single,aligned,"(0, 1, 16229)",1.25,1.25,0.0,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-04,True,amplify_5x,group,aligned,,1.125,1.125,0.0,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-04,True,ablate,group,aligned,,1.125,0.875,-0.25,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-04,True,amplify_5x,group,opposed,,1.125,1.125,0.0,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-04,True,ablate,group,opposed,,1.125,1.125,0.0,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-04,True,amplify_5x,single,aligned,"(0, 2, 16200)",1.125,1.25,0.125,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-04,True,ablate,single,aligned,"(0, 2, 16200)",1.125,0.875,-0.25,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-04,True,amplify_5x,single,aligned,"(1, 1, 11660)",1.125,0.625,-0.5,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-04,True,ablate,single,aligned,"(1, 1, 11660)",1.125,1.125,0.0,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-04,True,amplify_5x,single,aligned,"(0, 1, 16229)",1.125,0.5,-0.625,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-04,True,ablate,single,aligned,"(0, 1, 16229)",1.125,1.0,-0.125,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-05,False,amplify_5x,group,aligned,,0.625,0.625,0.0,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-05,False,ablate,group,aligned,,0.625,0.625,0.0,True,True,False
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-05,False,amplify_5x,group,opposed,,0.625,-0.125,-0.75,True,False,True
+gemma2-2b_Texas_capital_token_friendly_b59986544628,TX-05,False,ablate,group,opposed,,0.625,0.25,-0.375,True,True,False

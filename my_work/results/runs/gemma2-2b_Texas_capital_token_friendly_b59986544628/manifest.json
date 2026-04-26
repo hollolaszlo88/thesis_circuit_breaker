@@ -1,0 +1,23 @@
+{
+  "run_id": "gemma2-2b_Texas_capital_token_friendly_b59986544628",
+  "timestamp_utc": "2026-04-26T13:56:06.059029+00:00",
+  "git_sha": "cb7d289",
+  "notebook": "1_run_attribution.ipynb",
+  "model_name": "google/gemma-2-2b",
+  "transcoder_name": "gemma",
+  "backend": "transformerlens",
+  "dtype": "bfloat16",
+  "active_template": "T1",
+  "n_questions": 5,
+  "attr_batch_size": 128,
+  "attr_max_feature_nodes": 8192,
+  "attr_offload": "disk",
+  "recurring_threshold": 3,
+  "top_k_intervention": 10,
+  "top_n_features": 20,
+  "config_path": "/workspace/thesis_circuit_breaker/my_work/data/questions_texas_capital_tf.json",
+  "results_root": "/workspace/thesis_circuit_breaker/my_work/results/runs/gemma2-2b_Texas_capital_token_friendly_b59986544628",
+  "run_config_snapshot": "run_config_snapshot.json",
+  "fingerprint_config_hash12": "b59986544628",
+  "fingerprint_version": 1
+}

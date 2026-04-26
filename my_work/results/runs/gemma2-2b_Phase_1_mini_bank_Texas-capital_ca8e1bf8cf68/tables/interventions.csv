@@ -1,0 +1,39 @@
+run_id,id,label,intervention,scope,direction,feature_key,margin_before,margin_after,delta_margin,predicted_before,predicted_after,flipped
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-01,True,amplify_5x,group,aligned,,1.875,2.0,0.125,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-01,True,ablate,group,aligned,,1.875,2.0,0.125,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-01,True,amplify_5x,group,opposed,,1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-01,True,ablate,group,opposed,,1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-01,True,amplify_5x,single,aligned,"(0, 2, 16200)",1.875,2.0,0.125,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-01,True,ablate,single,aligned,"(0, 2, 16200)",1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-01,True,amplify_5x,single,aligned,"(0, 1, 16229)",1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-01,True,ablate,single,aligned,"(0, 1, 16229)",1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-01,True,amplify_5x,single,aligned,"(1, 1, 11660)",1.875,2.0,0.125,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-01,True,ablate,single,aligned,"(1, 1, 11660)",1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-02,False,amplify_5x,group,aligned,,1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-02,False,ablate,group,aligned,,1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-02,False,amplify_5x,group,opposed,,1.875,2.125,0.25,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-02,False,ablate,group,opposed,,1.875,2.0,0.125,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-03,True,amplify_5x,group,aligned,,2.25,2.375,0.125,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-03,True,ablate,group,aligned,,2.25,2.125,-0.125,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-03,True,amplify_5x,group,opposed,,2.25,2.25,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-03,True,ablate,group,opposed,,2.25,2.25,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-03,True,amplify_5x,single,aligned,"(0, 2, 16200)",2.25,2.375,0.125,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-03,True,ablate,single,aligned,"(0, 2, 16200)",2.25,2.25,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-03,True,amplify_5x,single,aligned,"(0, 1, 16229)",2.25,2.25,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-03,True,ablate,single,aligned,"(0, 1, 16229)",2.25,2.25,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-03,True,amplify_5x,single,aligned,"(1, 1, 11660)",2.25,2.25,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-03,True,ablate,single,aligned,"(1, 1, 11660)",2.25,2.25,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-04,True,amplify_5x,group,aligned,,1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-04,True,ablate,group,aligned,,1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-04,True,amplify_5x,group,opposed,,1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-04,True,ablate,group,opposed,,1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-04,True,amplify_5x,single,aligned,"(0, 2, 16200)",1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-04,True,ablate,single,aligned,"(0, 2, 16200)",1.875,2.0,0.125,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-04,True,amplify_5x,single,aligned,"(0, 1, 16229)",1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-04,True,ablate,single,aligned,"(0, 1, 16229)",1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-04,True,amplify_5x,single,aligned,"(1, 1, 11660)",1.875,2.0,0.125,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-04,True,ablate,single,aligned,"(1, 1, 11660)",1.875,1.875,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-05,False,amplify_5x,group,aligned,,1.75,1.75,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-05,False,ablate,group,aligned,,1.75,1.75,0.0,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-05,False,amplify_5x,group,opposed,,1.75,2.0,0.25,True,True,False
+gemma2-2b_Phase_1_mini_bank_Texas-capital_ca8e1bf8cf68,TX-05,False,ablate,group,opposed,,1.75,1.875,0.125,True,True,False

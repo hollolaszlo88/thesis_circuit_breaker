@@ -1,0 +1,48 @@
+{
+  "run_id": "gemma2-2b_Texas_capital_token_friendly_b59986544628",
+  "model": "google/gemma-2-2b",
+  "transcoder": "gemma",
+  "backend": "transformerlens",
+  "active_template": "T1",
+  "n_questions": 5,
+  "accuracy_by_template": {
+    "T1": {
+      "correct": 3,
+      "total": 5,
+      "pct": 60.0
+    }
+  },
+  "n_recurring_features": 10,
+  "intervention_summary": {
+    "group_aligned_amplify_5x": {
+      "avg_delta_margin": -0.1,
+      "n_flipped": 0,
+      "total": 5
+    },
+    "group_aligned_ablate": {
+      "avg_delta_margin": -0.175,
+      "n_flipped": 0,
+      "total": 5
+    },
+    "group_opposed_amplify_5x": {
+      "avg_delta_margin": -0.2,
+      "n_flipped": 1,
+      "total": 5
+    },
+    "group_opposed_ablate": {
+      "avg_delta_margin": -0.125,
+      "n_flipped": 0,
+      "total": 5
+    },
+    "single_aligned_amplify_5x": {
+      "avg_delta_margin": -0.2778,
+      "n_flipped": 0,
+      "total": 9
+    },
+    "single_aligned_ablate": {
+      "avg_delta_margin": -0.0972,
+      "n_flipped": 0,
+      "total": 9
+    }
+  }
+}
