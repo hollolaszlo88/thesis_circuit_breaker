@@ -80,6 +80,11 @@ target/
 demos/**/graphs
 demos/**/graph_files
 
+# Results: raw graph tensors from large runs (commit graphs_json/ and tables/ instead)
+# For pilot runs (<= ~20 questions) graphs_pt/ is small enough to commit.
+# Uncomment the line below when running larger experiments to avoid huge commits.
+# my_work/results/runs/*/graphs_pt/
+
 # IPython
 profile_default/
 ipython_config.py
