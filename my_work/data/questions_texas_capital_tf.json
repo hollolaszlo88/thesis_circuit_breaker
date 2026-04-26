@@ -1,0 +1,47 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "description": "Phase 1 mini bank: Texas-capital style True/False probes inspired by runpod_baseline wording.",
+    "active_template": "T1"
+  },
+  "templates": {
+    "T1": "Statement: \"{S}\"\nAnswer with exactly one word: True or False."
+  },
+  "questions": [
+    {
+      "id": "TX-01",
+      "category": "capital_reasoning",
+      "statement": "Fact: the capital of the state containing Dallas is Austin.",
+      "label": true,
+      "notes": "Directly mirrors the runpod baseline pattern with the correct completion."
+    },
+    {
+      "id": "TX-02",
+      "category": "capital_reasoning",
+      "statement": "Fact: the capital of the state containing Dallas is Houston.",
+      "label": false,
+      "notes": "Same pattern, incorrect city."
+    },
+    {
+      "id": "TX-03",
+      "category": "capital_reasoning",
+      "statement": "Dallas is in Texas.",
+      "label": true,
+      "notes": "Intermediate hop in the Dallas -> Texas -> Austin reasoning chain."
+    },
+    {
+      "id": "TX-04",
+      "category": "capital_reasoning",
+      "statement": "Austin is the capital of Texas.",
+      "label": true,
+      "notes": "Canonical capital fact in plain form."
+    },
+    {
+      "id": "TX-05",
+      "category": "capital_reasoning",
+      "statement": "Texas has no capital city.",
+      "label": false,
+      "notes": "Simple contradiction to test false handling."
+    }
+  ]
+}
