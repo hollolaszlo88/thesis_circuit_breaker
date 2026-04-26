@@ -1,11 +1,11 @@
 {
   "metadata": {
     "version": "1.0",
-    "description": "Phase 1 mini bank: Texas-capital style True/False probes inspired by runpod_baseline wording.",
+    "description": "Texas capital token friendly",
     "active_template": "T1"
   },
   "templates": {
-    "T1": "Statement: \"{S}\"\nAnswer with exactly one word: True or False."
+    "T1": "Statement: {S}\nAnswer:"
   },
   "questions": [
     {

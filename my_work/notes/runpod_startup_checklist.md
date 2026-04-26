@@ -12,6 +12,14 @@ Use this every time you launch a new pod.
 jupyter server list
 ```
 
+source /workspace/venvs/ct/bin/activate
+python -m pip install -U ipykernel
+python -m ipykernel install --user --name ct-runpod --display-name "Python (ct-runpod)"
+jupyter kernelspec list
+
+
+
+
 Copy the URL/token shown there.
 
 ## 2) Connect Cursor to the remote kernel
