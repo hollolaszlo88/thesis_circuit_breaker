@@ -1,13 +1,12 @@
 {
   "metadata": {
     "version": "1.0",
-    "description": "Phase 1 pilot question bank — triangle inequality. Edit this file to add, remove, or replace questions. The notebook loads it at runtime, so no notebook changes are needed when updating the question set.",
+    "description": "Triangle inequality token friendly",
     "active_template": "T1"
   },
   "templates": {
-    "T1": "Statement: \"{S}\"\nAnswer with exactly one word: True or False.",
-    "T2": "Is the following statement true?\n\"{S}\"\nAnswer: True or False.",
-    "T3": "Evaluate the claim below.\nClaim: \"{S}\"\nOutput exactly one token: True or False."
+    "T1": "Statement: \"{S}\"\nAnswer:",
+    "T2": "Statement: \"{S}\"\nAnswer with exactly one word: True or False."
   },
   "questions": [
     {
