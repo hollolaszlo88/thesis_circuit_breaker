@@ -7,8 +7,10 @@ Constants (from plan, never change for binary labels):
 
 Schema fields in every generated entry:
     task_type    : "binary"  → label is True/False, attribution targets [True, False]
-                   "numeric" → label is an integer (e.g. 9), single target
-    label_token  : the correct next token (e.g. " True", " False", "9")
+                   "numeric" → label is an integer; must be single-digit for Gemma
+                                next-token attribution (label_token is that digit).
+    label_token  : exact string that encodes to one token for the evaluator
+                   (digits 1–9 in practice for numeric_open).
 
 Public API:
     verify_triangle_claim(a, b, c, claim_type) -> bool
@@ -580,7 +582,12 @@ def _make_numeric_open_entry_v2(
     b: int,
     kind: str,
 ) -> dict:
-    """Open-ended max/min third-side question; tail fixed to answer_colon."""
+    """Open-ended max/min third-side question; tail fixed to answer_colon.
+
+    Answers are restricted to single decimal digits (1–9). Gemma tokenizes
+    multi-digit numbers (e.g. "13") as multiple tokens, which breaks
+    single-token attribution and first-token accuracy checks.
+    """
     if kind == "max_third":
         body = (
             f"Question: Two sides of a triangle have lengths {a} and {b}. "
@@ -593,6 +600,12 @@ def _make_numeric_open_entry_v2(
             f"The smallest possible integer length of the third side is"
         )
         c_answer = abs(a - b) + 1
+
+    if not (1 <= c_answer <= 9):
+        raise ValueError(
+            f"numeric_open requires single-digit answer 1–9, got kind={kind!r}, "
+            f"(a,b)=({a},{b}) -> answer={c_answer}"
+        )
 
     prompt = body + _TAILS_V2["answer_colon"]
     label_token = str(c_answer)
@@ -614,22 +627,39 @@ def _make_numeric_open_entry_v2(
     }
 
 
-# Pairs (a, b) reused from supervisor; c_max = a+b-1, c_min = |a-b|+1
-_OPEN_PAIRS_V2: list[tuple[int, int]] = [
-    (3, 4), (5, 7), (8, 9), (10, 13), (4, 5), (6, 7), (12, 15),
-    (2, 3), (5, 6), (7, 8), (9, 10), (11, 12), (14, 15), (3, 5),
-    (6, 8),
-]
+def _open_pairs_max_third_single_digit() -> list[tuple[int, int]]:
+    """(a,b) with a+b-1 in 1..9 so the max third side is one SentencePiece digit token."""
+    pairs: list[tuple[int, int]] = []
+    for a in range(1, 10):
+        for b in range(1, 10):
+            if a + b - 1 <= 9:
+                pairs.append((a, b))
+    return pairs
+
+
+def _open_pairs_min_third_single_digit() -> list[tuple[int, int]]:
+    """(a,b) with |a-b|+1 in 1..9 so the min third side is one digit token."""
+    pairs: list[tuple[int, int]] = []
+    for a in range(1, 20):
+        for b in range(1, 20):
+            c = abs(a - b) + 1
+            if 1 <= c <= 9:
+                pairs.append((a, b))
+    return pairs
 
 
 def _generate_numeric_open_prompts_v2(n: int, rng: random.Random, id_fn) -> list[dict]:
     """Generate n numeric_open rows (max and min third side, answer_colon tail)."""
     entries = []
-    pairs = list(_OPEN_PAIRS_V2)
-    rng.shuffle(pairs)
+    pairs_max = _open_pairs_max_third_single_digit()
+    pairs_min = _open_pairs_min_third_single_digit()
     for i in range(n):
-        a, b = pairs[i % len(pairs)]
-        kind = "max_third" if i % 2 == 0 else "min_third"
+        if i % 2 == 0:
+            a, b = rng.choice(pairs_max)
+            kind = "max_third"
+        else:
+            a, b = rng.choice(pairs_min)
+            kind = "min_third"
         entries.append(_make_numeric_open_entry_v2(id_fn(), a, b, kind))
     return entries
 

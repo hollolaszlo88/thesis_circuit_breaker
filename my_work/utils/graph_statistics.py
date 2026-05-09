@@ -1,8 +1,8 @@
 """
 graph_statistics.py — Compute structural statistics from circuit-tracer attribution graphs.
 
-Superset diagnostic schema (backward-compatible):
-  All original fields preserved + supervisor-requested fingerprint block.
+Superset diagnostic schema (backward-compatible with v1 + full parity with supervisor
+prompt-experiments/graph_structure/graph_stats.py):
 
 Fixed constants (never change between phases):
     NODE_THRESHOLD = 0.8
@@ -20,6 +20,11 @@ Public API:
     append_statistic(stat, path) -> None
     aggregate_statistics(stats) -> dict
     _flatten_nested(stat) -> dict
+
+Schema provenance legend (used in comments below):
+    [OURS]  — field we added, not in supervisor fingerprint
+    [SUP]   — supervisor graph_stats.py fingerprint field
+    [BOTH]  — present in both (may differ in naming/shape)
 """
 
 from __future__ import annotations
@@ -36,7 +41,7 @@ TOP_K = 50               # used for legacy top50_features field
 TOP_K_SUPERVISOR = 20   # used for supervisor topk20 block
 NODE_THRESHOLD = 0.8
 EDGE_THRESHOLD = 0.98   # legacy single edge_density metric (unchanged)
-EDGE_THRESHOLD_PRUNE_CURVE = 0.99  # supervisor protocol: fixed edge threshold for the survival curve
+EDGE_THRESHOLD_PRUNE_CURVE = 0.99  # supervisor protocol: fixed edge threshold for the sweep
 PRUNE_THRESHOLDS = [0.50, 0.60, 0.70, 0.80, 0.90, 0.95, 0.99]
 
 
@@ -95,7 +100,7 @@ def compute_statistics(
     task_type = prompt_entry.get("task_type", "binary")
 
     result: dict[str, Any] = {
-        # ── metadata ───────────────────────────────────────────────────────────
+        # ── metadata ──────────────────────────────────────────────────────── [OURS]
         "prompt_id": prompt_entry["prompt_id"],
         "phase": phase,
         "task_type": task_type,
@@ -104,7 +109,7 @@ def compute_statistics(
         "template_id": prompt_entry.get("template_id"),
         "attribution_succeeded": False,
 
-        # ── v2 sliceable dimensions (passthrough) ─────────────────────────────
+        # ── v2 sliceable dimensions (passthrough) ─────────────────────── [OURS]
         "family": prompt_entry.get("family"),
         "tail": prompt_entry.get("tail"),
         "claim_type": prompt_entry.get("claim_type"),
@@ -113,51 +118,73 @@ def compute_statistics(
         "sides": prompt_entry.get("sides"),
         "triangle_valid": prompt_entry.get("triangle_valid"),
 
-        # ── verdict probabilities (original) ──────────────────────────────────
+        # ── verdict probabilities (flattened) ─────────────────────────── [OURS]
         "prob_true": None,
         "prob_false": None,
         "prob_target": None,
         "logit_gap": None,
 
-        # ── active features (original) ─────────────────────────────────────────
+        # ── verdict as nested block (supervisor parity) ───────────────── [SUP]
+        # {targets: [str, ...], probs: [float, ...]} parallel lists
+        "verdict": None,
+
+        # ── active features ───────────────────────────────────────────── [BOTH]
         "n_active_features": None,
 
-        # ── layer distribution (original) ─────────────────────────────────────
-        "layer_distribution": None,   # length-26 normalised histogram
+        # ── n_layers detected from graph ──────────────────────────────── [SUP]
+        "n_layers": None,
 
-        # ── top-50 legacy block (original) ────────────────────────────────────
-        "top50_features": None,       # [[layer, pos, feat_idx], ...]
+        # ── full-graph layer histogram (integer counts, len=n_layers) ─── [SUP]
+        "layer_hist": None,
+
+        # ── layer scalar summary (derived from full active-feature hist) ─ [BOTH]
+        # {mean, std, median, entropy_bits}
+        "layer_stats": None,
+
+        # ── position range over active features ───────────────────────── [SUP]
+        # [min_position, max_position]
+        "position_range": None,
+
+        # ── layer distribution (normalised, top-50 based) ─────────────── [OURS]
+        "layer_distribution": None,
+
+        # ── top-50 legacy block ───────────────────────────────────────── [OURS]
+        "top50_features": None,
         "mean_top50_score": None,
         "top10_over_top50": None,
-        "layer_entropy": None,        # nats
+        "layer_entropy": None,        # nats (top-50 based)
 
-        # ── pruned graph density at fixed threshold (original) ─────────────────
+        # ── pruned graph density at fixed threshold (legacy) ──────────── [OURS]
         "edge_density": None,         # at NODE_THRESHOLD=0.8, EDGE_THRESHOLD=0.98
 
-        # ── error diagnostic (original) ───────────────────────────────────────
+        # ── error diagnostic ──────────────────────────────────────────── [OURS]
         "mean_error_node_weight": None,
 
-        # ── NEW: layer scalar summary ──────────────────────────────────────────
-        "layer_stats": None,          # {mean, std, median, entropy_bits}
-
-        # ── NEW: pruning survival curve (supervisor protocol) ─────────────────
+        # ── pruning survival curve (supervisor protocol) ──────────────── [BOTH]
         # node_threshold swept over PRUNE_THRESHOLDS; edge_threshold fixed at 0.99
-        # 7-entry list; each: {threshold, n_nodes_kept, n_edges_kept, edge_density}
+        # Each entry: {threshold, n_nodes_kept, n_nodes_total, n_edges_kept,
+        #              n_edges_total, edge_density}
+        # n_nodes_total / n_edges_total added for full supervisor parity.
         "prune_curve": None,
 
-        # ── NEW: supervisor top-K=20 block ────────────────────────────────────
-        # {features: [[layer,pos,feat_idx,score], ...],
-        #  score_total, score_gini, layer_hist: length-26 vector}
+        # ── top-K=20 block ────────────────────────────────────────────── [BOTH]
+        # {features: [{layer,pos,feat_idx,score}, ...],  ← dicts, supervisor parity
+        #  score_total, score_gini,
+        #  layer_hist:        normalized fractions (our addition),
+        #  layer_hist_counts: integer counts       (supervisor parity)}
         "topk20": None,
     }
 
     try:
         import math
 
-        # ── Probabilities and logit gap ────────────────────────────────────────
+        # ── Probabilities, verdict, and logit gap ─────────────────────────────
         probs = graph.logit_probabilities.tolist()
         targets = [t.token_str for t in graph.logit_targets]
         eps = 1e-12
+
+        # Nested verdict block — supervisor parity
+        result["verdict"] = {"targets": targets, "probs": probs}
 
         if task_type == "binary":
             prob_true = prob_false = None
@@ -168,7 +195,6 @@ def compute_statistics(
                     prob_false = p
             result["prob_true"] = prob_true
             result["prob_false"] = prob_false
-            # Use normalised bool to avoid Python truthiness bug on string labels.
             label_is_true = _binary_label_true(prompt_entry["label"])
             result["prob_target"] = prob_true if label_is_true else prob_false
             if prob_true is not None and prob_false is not None:
@@ -187,39 +213,24 @@ def compute_statistics(
                 result["logit_gap"] = float(math.log(prob_target + eps))
 
         # ── Active feature count ───────────────────────────────────────────────
-        n_active = int(graph.active_features.shape[0])
+        af = graph.active_features  # shape (N, 3): layer, pos, feat_idx
+        n_active = int(af.shape[0])
         result["n_active_features"] = n_active
 
-        # ── Top-50 legacy block ────────────────────────────────────────────────
-        features50, scores50 = get_top_features(graph, n=TOP_K)
-        scores50_arr = np.array(scores50, dtype=float)
+        # ── n_layers: auto-detect from max layer in active features ────────────
+        all_layers_raw = af[:, 0].cpu().numpy().astype(int)
+        n_layers_detected = int(all_layers_raw.max()) + 1 if n_active > 0 else N_LAYERS
+        result["n_layers"] = n_layers_detected
 
-        result["top50_features"] = [list(f) for f in features50]
+        # ── Full-graph layer histogram (integer) ───────────────────────────────
+        layer_full_counts_int = np.bincount(all_layers_raw, minlength=n_layers_detected).tolist()
+        result["layer_hist"] = layer_full_counts_int
 
-        layer_counts = [0] * N_LAYERS
-        for (layer, _pos, _feat) in features50:
-            if 0 <= layer < N_LAYERS:
-                layer_counts[layer] += 1
-        total_k = sum(layer_counts)
-        layer_dist = [c / total_k for c in layer_counts] if total_k > 0 else [0.0] * N_LAYERS
-        result["layer_distribution"] = layer_dist
-
-        result["mean_top50_score"] = float(np.mean(np.abs(scores50_arr))) if len(scores50_arr) else 0.0
-
-        abs50 = np.abs(scores50_arr)
-        top50_sum = float(np.sum(abs50))
-        top10_sum = float(np.sum(abs50[:10])) if len(abs50) >= 10 else top50_sum
-        result["top10_over_top50"] = (top10_sum / top50_sum) if top50_sum > 0 else 0.0
-
-        eps_e = 1e-12
-        dist_arr = np.array(layer_dist, dtype=float)
-        result["layer_entropy"] = float(-np.sum(dist_arr * np.log(dist_arr + eps_e)))
-
-        # ── NEW: layer scalar summary ──────────────────────────────────────────
-        all_layers = graph.active_features[:, 0].cpu().numpy().astype(int)
-        layer_full_counts = np.bincount(all_layers, minlength=N_LAYERS).astype(float)
-        layer_full_norm = layer_full_counts / layer_full_counts.sum() if layer_full_counts.sum() > 0 else layer_full_counts
-        layer_indices = np.arange(N_LAYERS, dtype=float)
+        # ── Layer scalar summary (from full histogram, not top-K) ─────────────
+        layer_full_counts_f = np.array(layer_full_counts_int, dtype=float)
+        layer_sum = layer_full_counts_f.sum()
+        layer_full_norm = layer_full_counts_f / layer_sum if layer_sum > 0 else layer_full_counts_f
+        layer_indices = np.arange(n_layers_detected, dtype=float)
 
         layer_mean = float(np.sum(layer_indices * layer_full_norm))
         layer_std = float(np.sqrt(np.sum(layer_full_norm * (layer_indices - layer_mean) ** 2)))
@@ -233,7 +244,35 @@ def compute_statistics(
             "entropy_bits": ent_bits,
         }
 
-        # ── Edge density at fixed threshold (original, unchanged) ──────────────
+        # ── Position range ─────────────────────────────────────────────────────
+        all_positions = af[:, 1].cpu().numpy().astype(int)
+        result["position_range"] = [int(all_positions.min()), int(all_positions.max())]
+
+        # ── Top-50 legacy block ────────────────────────────────────────────────
+        features50, scores50 = get_top_features(graph, n=TOP_K)
+        scores50_arr = np.array(scores50, dtype=float)
+
+        result["top50_features"] = [list(f) for f in features50]
+
+        layer_counts_top50 = [0] * N_LAYERS
+        for (layer, _pos, _feat) in features50:
+            if 0 <= layer < N_LAYERS:
+                layer_counts_top50[layer] += 1
+        total_k = sum(layer_counts_top50)
+        layer_dist = [c / total_k for c in layer_counts_top50] if total_k > 0 else [0.0] * N_LAYERS
+        result["layer_distribution"] = layer_dist
+
+        result["mean_top50_score"] = float(np.mean(np.abs(scores50_arr))) if len(scores50_arr) else 0.0
+
+        abs50 = np.abs(scores50_arr)
+        top50_sum = float(np.sum(abs50))
+        top10_sum = float(np.sum(abs50[:10])) if len(abs50) >= 10 else top50_sum
+        result["top10_over_top50"] = (top10_sum / top50_sum) if top50_sum > 0 else 0.0
+
+        dist_arr = np.array(layer_dist, dtype=float)
+        result["layer_entropy"] = float(-np.sum(dist_arr * np.log(dist_arr + 1e-12)))
+
+        # ── Edge density at fixed threshold (legacy) ───────────────────────────
         try:
             from circuit_tracer.graph import prune_graph
             pres = prune_graph(graph, node_threshold=NODE_THRESHOLD, edge_threshold=EDGE_THRESHOLD)
@@ -245,8 +284,10 @@ def compute_statistics(
         except Exception:
             result["edge_density"] = None
 
-        # ── NEW: pruning survival curve (supervisor protocol) ─────────────────
-        # Sweep node_threshold; edge_threshold is fixed at EDGE_THRESHOLD_PRUNE_CURVE.
+        # ── Pruning survival curve (supervisor protocol) ───────────────────────
+        # node_threshold swept; edge_threshold fixed at EDGE_THRESHOLD_PRUNE_CURVE.
+        # Each entry now includes n_nodes_total / n_edges_total (mask sizes)
+        # for full supervisor parity.
         try:
             from circuit_tracer.graph import prune_graph
             curve = []
@@ -259,27 +300,33 @@ def compute_statistics(
                     )
                     nm, em = pr.node_mask, pr.edge_mask
                     n_n = int(nm.sum().item())
+                    n_n_total = int(nm.numel())
                     n_e = int(em.sum().item())
+                    n_e_total = int(em.numel())
                     mx = n_n * (n_n - 1)
                     density = (n_e / mx) if mx > 0 else 0.0
                     curve.append({
                         "threshold": thresh,
                         "n_nodes_kept": n_n,
+                        "n_nodes_total": n_n_total,
                         "n_edges_kept": n_e,
+                        "n_edges_total": n_e_total,
                         "edge_density": density,
                     })
                 except Exception:
                     curve.append({
                         "threshold": thresh,
                         "n_nodes_kept": None,
+                        "n_nodes_total": None,
                         "n_edges_kept": None,
+                        "n_edges_total": None,
                         "edge_density": None,
                     })
             result["prune_curve"] = curve
         except Exception:
             result["prune_curve"] = None
 
-        # ── NEW: supervisor top-K=20 block ────────────────────────────────────
+        # ── Top-K=20 block (supervisor parity + extras) ────────────────────────
         try:
             features20, scores20 = get_top_features(graph, n=TOP_K_SUPERVISOR)
             scores20_arr = np.array(scores20, dtype=float)
@@ -294,19 +341,28 @@ def compute_statistics(
             else:
                 gini = 0.0
 
-            lh = [0] * N_LAYERS
+            # Integer count histogram (supervisor parity)
+            lh_counts = [0] * n_layers_detected
             for (layer, _pos, _feat) in features20:
-                if 0 <= layer < N_LAYERS:
-                    lh[layer] += 1
-            lh_total = sum(lh)
-            lh_norm = [c / lh_total for c in lh] if lh_total > 0 else [0.0] * N_LAYERS
+                if 0 <= layer < n_layers_detected:
+                    lh_counts[layer] += 1
+
+            # Normalized histogram (our addition, useful for plotting)
+            lh_total = sum(lh_counts)
+            lh_norm = [c / lh_total for c in lh_counts] if lh_total > 0 else [0.0] * n_layers_detected
+
+            # Features as list of dicts (supervisor parity)
+            features20_dicts = [
+                {"layer": int(layer), "pos": int(pos), "feat_idx": int(feat), "score": float(sc)}
+                for (layer, pos, feat), sc in zip(features20, scores20)
+            ]
 
             result["topk20"] = {
-                "features": [[layer, pos, feat, float(sc)]
-                              for (layer, pos, feat), sc in zip(features20, scores20)],
+                "features": features20_dicts,
                 "score_total": score_total,
                 "score_gini": gini,
-                "layer_hist": lh_norm,
+                "layer_hist_counts": lh_counts,   # integer — supervisor parity
+                "layer_hist": lh_norm,             # normalized — our addition
             }
         except Exception:
             result["topk20"] = None
@@ -436,6 +492,8 @@ _SCALAR_METRICS = [
     "mean_error_node_weight",
     "logit_gap",
     "prob_target",
+    # supervisor parity
+    "n_layers",
     # new scalars derived from nested blocks
     "layer_stats_mean",
     "layer_stats_std",
@@ -449,8 +507,11 @@ _SCALAR_METRICS = [
 def _flatten_nested(stat: dict) -> dict:
     """Flatten nested supervisor blocks into scalar keys for aggregation/classifiers.
 
-    Expanded in v2 to also expose prune-curve scalars per threshold:
-      n_kept_at_0.50, n_edges_at_0.50, density_at_0.50 … (one triple per threshold)
+    Exposes:
+    - layer_stats.*  scalars
+    - topk20 score_total / score_gini
+    - prune_curve per-threshold: n_kept_at_*, n_edges_at_*, density_at_*,
+                                  n_nodes_total_at_*, n_edges_total_at_*  (new)
     Column naming matches supervisor analyze.py conventions so one classifier
     code path works across both outputs.
     """
@@ -467,7 +528,6 @@ def _flatten_nested(stat: dict) -> dict:
     flat["topk20_score_gini"] = t20.get("score_gini")
 
     # Explode prune_curve list into per-threshold scalars.
-    # Naming: n_kept_at_0.50, density_at_0.50 (matches supervisor analyze.py).
     curve = stat.get("prune_curve") or []
     for pt in curve:
         if not isinstance(pt, dict):
@@ -479,6 +539,8 @@ def _flatten_nested(stat: dict) -> dict:
         flat[f"n_kept_at_{key}"] = pt.get("n_nodes_kept")
         flat[f"n_edges_at_{key}"] = pt.get("n_edges_kept")
         flat[f"density_at_{key}"] = pt.get("edge_density")
+        flat[f"n_nodes_total_at_{key}"] = pt.get("n_nodes_total")
+        flat[f"n_edges_total_at_{key}"] = pt.get("n_edges_total")
 
     return flat
 
@@ -501,7 +563,7 @@ def aggregate_statistics(stats: list[dict]) -> dict:
     prune_keys: list[str] = []
     if flat_succeeded:
         for key in flat_succeeded[0]:
-            if key.startswith("n_kept_at_") or key.startswith("density_at_"):
+            if any(key.startswith(p) for p in ("n_kept_at_", "density_at_", "n_nodes_total_at_", "n_edges_total_at_")):
                 prune_keys.append(key)
 
     all_metrics = _SCALAR_METRICS + sorted(set(prune_keys))
