@@ -8,7 +8,7 @@ Constants (from plan, never change for binary labels):
 Schema fields in every generated entry:
     task_type    : "binary"  → label is True/False, attribution targets [True, False]
                    "numeric" → label is an integer (e.g. 9), single target
-    label_token  : the correct next token (e.g. " True", " False", " 9")
+    label_token  : the correct next token (e.g. " True", " False", "9")
 
 Public API:
     verify_triangle_claim(a, b, c, claim_type) -> bool
@@ -44,7 +44,7 @@ TEMPLATES: dict[int | str, str] = {
 TEMPLATES_GENERAL = [1, 2, 3, 4]
 TEMPLATES_BOUNDARY = [5, 6, 7, 8]
 TEMPLATES_NUMERIC = ["N1"]
-TOKEN_NUMERIC_9 = " 9"
+TOKEN_NUMERIC_9 = "9"
 
 
 # ── Ground-truth verification ──────────────────────────────────────────────────
@@ -169,7 +169,7 @@ def _make_numeric_entry(
     # Largest integer third side for strict triangle inequality is a+b-1.
     c_max = a + b - 1
     prompt = _build_prompt(a, b, c_max, template_id, "holds")
-    label_token = f" {c_max}"
+    label_token = f"{c_max}"
     return {
         "prompt_id": prompt_id,
         "prompt": prompt,
@@ -275,7 +275,7 @@ def _generate_binary_prompts(n: int, rng: random.Random, id_fn) -> list[dict]:
 
 def _generate_numeric_prompts(n: int, rng: random.Random, id_fn) -> list[dict]:
     """
-    Generate numeric prompts with controlled single-token target ' 9'.
+    Generate numeric prompts with controlled single-token target '9'.
     We pick (a,b) pairs with a+b=10 so max integer third side is always 9.
     """
     entries: list[dict] = []
@@ -302,7 +302,7 @@ def generate_triangle_prompts(
     - numeric_frac controls the numeric share (default 20%).
     - Binary subset is exactly 50/50 True/False.
     - Binary subset keeps ~10% degenerate / invalid triples.
-    - Numeric subset currently uses fixed target token ' 9' for controlled
+    - Numeric subset currently uses fixed target token '9' for controlled
       attribution comparisons.
     """
     rng = random.Random(seed)
