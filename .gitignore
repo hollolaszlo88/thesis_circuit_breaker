@@ -183,3 +183,9 @@ cython_debug/
 *.parquet
 .vscode/
 .DS_Store
+my_work/notebooks/4_true_false_experimentation_prompt1.html
+.gitignore
+my_work/notebooks/4_true_false_experimentation_prompt2.html
+my_work/notebooks/4_true_false_experimentation_prompt1.pdf
+.gitignore
+my_work/notebooks/4_true_false_experimentation_prompt2.pdf
