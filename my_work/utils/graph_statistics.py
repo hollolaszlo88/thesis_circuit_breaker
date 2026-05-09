@@ -50,16 +50,23 @@ def compute_statistics(
     """
     from circuit_tracer.utils.demo_utils import get_top_features
 
+    task_type = prompt_entry.get("task_type", "binary")
+
     result: dict[str, Any] = {
         "prompt_id": prompt_entry["prompt_id"],
         "phase": phase,
+        "task_type": task_type,
         "label": prompt_entry["label"],
         "label_token": prompt_entry["label_token"],
         "template_id": prompt_entry["template_id"],
         "attribution_succeeded": False,
+        # binary-task fields
         "prob_true": None,
         "prob_false": None,
         "logit_gap": None,
+        # numeric-task field (probability of the single correct token)
+        "prob_target": None,
+        # shared structural fields
         "n_active_features": None,
         "layer_distribution": None,
         "edge_density": None,
@@ -72,29 +79,37 @@ def compute_statistics(
 
     try:
         # ── Probabilities and logit gap ────────────────────────────────────────
+        import math
         probs = graph.logit_probabilities.tolist()
         targets = [t.token_str for t in graph.logit_targets]
-        prob_true = prob_false = None
-        for token_str, p in zip(targets, probs):
-            if token_str.strip() == "True":
-                prob_true = p
-            elif token_str.strip() == "False":
-                prob_false = p
-        result["prob_true"] = prob_true
-        result["prob_false"] = prob_false
-        if prob_true is not None and prob_false is not None:
-            # logit_gap is log(p_true/p_false) ≈ logit(True) - logit(False)
-            # Use the raw logit if accessible, otherwise approximate from probs
-            try:
-                logits_attr = graph.logit_attributions  # shape: (n_targets,)
-                # fallback: difference of prob logits
-                import math
-                eps = 1e-12
+        eps = 1e-12
+
+        if task_type == "binary":
+            prob_true = prob_false = None
+            for token_str, p in zip(targets, probs):
+                if token_str.strip() == "True":
+                    prob_true = p
+                elif token_str.strip() == "False":
+                    prob_false = p
+            result["prob_true"] = prob_true
+            result["prob_false"] = prob_false
+            result["prob_target"] = prob_true if prompt_entry["label"] else prob_false
+            if prob_true is not None and prob_false is not None:
                 result["logit_gap"] = float(
                     math.log(prob_true + eps) - math.log(prob_false + eps)
                 )
-            except Exception:
-                pass
+        else:
+            # numeric: single attribution target → the correct answer token
+            label_tok = prompt_entry["label_token"].strip()
+            prob_target = None
+            for token_str, p in zip(targets, probs):
+                if token_str.strip() == label_tok:
+                    prob_target = p
+                    break
+            result["prob_target"] = prob_target
+            # logit_gap re-used as log-prob of the target token for comparability
+            if prob_target is not None:
+                result["logit_gap"] = float(math.log(prob_target + eps))
 
         # ── Active feature count ───────────────────────────────────────────────
         n_active = int(graph.active_features.shape[0])
@@ -251,6 +266,7 @@ _SCALAR_METRICS = [
     "layer_entropy",
     "mean_error_node_weight",
     "logit_gap",
+    "prob_target",
 ]
 
 

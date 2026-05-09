@@ -5,6 +5,11 @@ Constants (from plan, never change):
     TOKEN_TRUE  = " True"   (vocab 5569)
     TOKEN_FALSE = " False"  (vocab 7662)
 
+Schema fields in every generated entry:
+    task_type    : "binary"  → label is True/False, attribution targets [True, False]
+                   "numeric" → label is an integer string (e.g. " 9"), single target
+    label_token  : the correct next token (e.g. " True", " False", " 9")
+
 Public API:
     verify_triangle_claim(a, b, c, claim_type) -> bool
     generate_triangle_prompts(n, seed) -> list[dict]
@@ -164,6 +169,7 @@ def _make_entry(
     return {
         "prompt_id": prompt_id,
         "prompt": prompt,
+        "task_type": "binary",
         "label": label,
         "label_token": TOKEN_TRUE if label else TOKEN_FALSE,
         "sides": [a, b, c],
