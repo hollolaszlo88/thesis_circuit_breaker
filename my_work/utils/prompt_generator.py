@@ -400,3 +400,323 @@ def generate_math_broad_prompts(n: int = 200, seed: int = 42) -> list[dict]:
         "Math-broad dataset generation is optional Stage 5 expansion. "
         "Implement when the triangle-only pipeline is complete."
     )
+
+
+# ── v2 dataset: families × tails (supervisor-aligned) ─────────────────────────
+#
+# Schema additions vs v1:
+#   family       : "numeric_validity" | "geometry_claim" | "numeric_open"
+#   tail         : "answer_colon" | "true_or_false" | "the_answer_is"
+#   claim_type   : "holds" | "does_not_hold" | None  (None for geometry)
+#   template_id  : prefixed — num_1…num_8, geom_triangle_classic…, open_max_third
+#   open_kind    : "max_third" | "min_third" | None
+
+# Tail suffix strings (keys match supervisor prompts.py TAILS dict).
+_TAILS_V2: dict[str, str] = {
+    "answer_colon":  " Answer:",
+    "true_or_false": " Answer with exactly one word: True or False.",
+    "the_answer_is": " The answer is",
+}
+
+# ── geometry_claim templates (supervisor-sourced, prefixed geom_) ──────────────
+
+_GEOM_TRUE_TEMPLATES: list[tuple[str, str]] = [
+    ("geom_triangle_classic",
+     "Statement: For any triangle, the sum of any two sides is greater than the third side."),
+    ("geom_triangle_each_side",
+     "Statement: In every triangle, each side is shorter than the sum of the other two."),
+    ("geom_triangle_two_sum",
+     "Statement: For any triangle, the sum of two sides is greater than the remaining side."),
+    ("geom_triangle_abc_symbolic",
+     "Statement: For any triangle ABC, |AB| + |BC| > |AC|."),
+    ("geom_triangle_valid_property",
+     "Statement: A valid triangle has the property that the sum of any two sides exceeds the third."),
+    ("geom_triangle_longest",
+     "Statement: In any triangle the longest side is shorter than the sum of the other two sides."),
+]
+
+_GEOM_FALSE_TEMPLATES: list[tuple[str, str]] = [
+    ("geom_triangle_classic_neg",
+     "Statement: For any triangle, the sum of any two sides is less than the third side."),
+    ("geom_triangle_each_side_neg",
+     "Statement: In every triangle, each side is longer than the sum of the other two."),
+    ("geom_triangle_two_sum_eq",
+     "Statement: For any triangle, the sum of two sides equals the remaining side."),
+    ("geom_triangle_abc_symbolic_neg",
+     "Statement: For any triangle ABC, |AB| + |BC| < |AC|."),
+    ("geom_triangle_valid_property_neg",
+     "Statement: A valid triangle has the property that the sum of any two sides equals the third."),
+    ("geom_triangle_longest_neg",
+     "Statement: In any triangle the longest side is greater than the sum of the other two sides."),
+]
+
+
+def _make_geom_entry(
+    prompt_id: str,
+    template_id: str,
+    body: str,
+    label: bool,
+    tail_key: str,
+) -> dict:
+    return {
+        "prompt_id": prompt_id,
+        "prompt": body + _TAILS_V2[tail_key],
+        "task_type": "binary",
+        "family": "geometry_claim",
+        "tail": tail_key,
+        "label": label,
+        "label_token": TOKEN_TRUE if label else TOKEN_FALSE,
+        "template_id": template_id,
+        "claim_type": None,
+        "claim_direction": None,
+        "open_kind": None,
+        "sides": None,
+        "triangle_valid": None,
+        "split": None,
+    }
+
+
+def _generate_geometry_prompts_v2(id_fn) -> list[dict]:
+    """Generate geometry_claim rows: 6 true + 6 false templates × 3 tails."""
+    entries = []
+    for tail_key in _TAILS_V2:
+        for tid, body in _GEOM_TRUE_TEMPLATES:
+            entries.append(_make_geom_entry(id_fn(), tid, body, True, tail_key))
+        for tid, body in _GEOM_FALSE_TEMPLATES:
+            entries.append(_make_geom_entry(id_fn(), tid, body, False, tail_key))
+    return entries  # 36 entries
+
+
+def _make_numeric_validity_entry_v2(
+    prompt_id: str,
+    a: int,
+    b: int,
+    c: int,
+    template_id: int | str,
+    claim_type: str,
+    triangle_valid: bool,
+    tail_key: str,
+) -> dict:
+    label = verify_triangle_claim(a, b, c, claim_type)
+    prompt = _build_prompt(a, b, c, template_id, claim_type)
+    # Strip v1's hardcoded "Answer:" suffix — tails are now appended separately.
+    # The v1 TEMPLATES already embed "Answer:" at the end; we replace it with
+    # the chosen tail.
+    if prompt.endswith(" Answer:"):
+        prompt = prompt[: -len(" Answer:")] + _TAILS_V2[tail_key]
+    else:
+        prompt = prompt + _TAILS_V2[tail_key]
+    return {
+        "prompt_id": prompt_id,
+        "prompt": prompt,
+        "task_type": "binary",
+        "family": "numeric_validity",
+        "tail": tail_key,
+        "label": label,
+        "label_token": TOKEN_TRUE if label else TOKEN_FALSE,
+        "template_id": f"num_{template_id}",
+        "claim_type": claim_type,
+        "claim_direction": "possible" if claim_type == "holds" else "not_possible",
+        "open_kind": None,
+        "sides": [a, b, c],
+        "triangle_valid": triangle_valid,
+        "split": None,
+    }
+
+
+def _generate_numeric_validity_prompts_v2(
+    n_per_tail_half: int,
+    rng: random.Random,
+    id_fn,
+) -> list[dict]:
+    """Generate numeric_validity rows balanced 50/50 per (tail) cell.
+
+    n_per_tail_half: true examples per tail (false will be equal).
+    Each tail cell uses TEMPLATES_GENERAL and a mix of valid/invalid triples.
+    ~10% degenerate cases are included within the false half.
+    """
+    entries = []
+    for tail_key in _TAILS_V2:
+        n_true = n_per_tail_half
+        n_false = n_per_tail_half
+        n_degen = max(1, round(n_false * 0.10))
+
+        # True rows: valid triple + "holds" claim
+        for _ in range(n_true):
+            a, b, c = _generate_valid_triple(rng)
+            tid = rng.choice(TEMPLATES_GENERAL)
+            entries.append(
+                _make_numeric_validity_entry_v2(
+                    id_fn(), a, b, c, tid, "holds", True, tail_key
+                )
+            )
+
+        # False rows: degenerate (holds → False) + invalid (does_not_hold on valid → False)
+        # Degenerate: claim "holds" on a degenerate/invalid triple → label False
+        for _ in range(n_degen):
+            a, b, c = _generate_degenerate_triple(rng)
+            tid = rng.choice(TEMPLATES_GENERAL)
+            entries.append(
+                _make_numeric_validity_entry_v2(
+                    id_fn(), a, b, c, tid, "holds", False, tail_key
+                )
+            )
+        # Remaining false: claim "does_not_hold" on a valid triple → label False
+        for _ in range(n_false - n_degen):
+            a, b, c = _generate_valid_triple(rng)
+            tid = rng.choice(TEMPLATES_GENERAL)
+            entries.append(
+                _make_numeric_validity_entry_v2(
+                    id_fn(), a, b, c, tid, "does_not_hold", True, tail_key
+                )
+            )
+
+    return entries
+
+
+def _make_numeric_open_entry_v2(
+    prompt_id: str,
+    a: int,
+    b: int,
+    kind: str,
+) -> dict:
+    """Open-ended max/min third-side question; tail fixed to answer_colon."""
+    if kind == "max_third":
+        body = (
+            f"Question: Two sides of a triangle have lengths {a} and {b}. "
+            f"The largest possible integer length of the third side is"
+        )
+        c_answer = a + b - 1
+    else:
+        body = (
+            f"Question: Two sides of a triangle have lengths {a} and {b}. "
+            f"The smallest possible integer length of the third side is"
+        )
+        c_answer = abs(a - b) + 1
+
+    prompt = body + _TAILS_V2["answer_colon"]
+    label_token = str(c_answer)
+    return {
+        "prompt_id": prompt_id,
+        "prompt": prompt,
+        "task_type": "numeric",
+        "family": "numeric_open",
+        "tail": "answer_colon",
+        "label": c_answer,
+        "label_token": label_token,
+        "template_id": f"open_{kind}",
+        "claim_type": None,
+        "claim_direction": None,
+        "open_kind": kind,
+        "sides": [a, b],
+        "triangle_valid": None,
+        "split": None,
+    }
+
+
+# Pairs (a, b) reused from supervisor; c_max = a+b-1, c_min = |a-b|+1
+_OPEN_PAIRS_V2: list[tuple[int, int]] = [
+    (3, 4), (5, 7), (8, 9), (10, 13), (4, 5), (6, 7), (12, 15),
+    (2, 3), (5, 6), (7, 8), (9, 10), (11, 12), (14, 15), (3, 5),
+    (6, 8),
+]
+
+
+def _generate_numeric_open_prompts_v2(n: int, rng: random.Random, id_fn) -> list[dict]:
+    """Generate n numeric_open rows (max and min third side, answer_colon tail)."""
+    entries = []
+    pairs = list(_OPEN_PAIRS_V2)
+    rng.shuffle(pairs)
+    for i in range(n):
+        a, b = pairs[i % len(pairs)]
+        kind = "max_third" if i % 2 == 0 else "min_third"
+        entries.append(_make_numeric_open_entry_v2(id_fn(), a, b, kind))
+    return entries
+
+
+def generate_triangle_prompts_v2(
+    n: int = 300,
+    seed: int = 42,
+    numeric_open_frac: float = 0.10,
+    geometry_frac: float = 0.20,
+) -> list[dict]:
+    """Generate v2 triangle-inequality prompt set.
+
+    Design: family × tail factorial with balanced binary labels per cell.
+
+    Families
+    --------
+    - numeric_validity  (~70%): concrete triples, 3 tails, balanced T/F per tail
+    - geometry_claim    (~20%): abstract statements, 3 tails, 6 true + 6 false templates
+    - numeric_open      (~10%): max/min third side, answer_colon only, excluded from
+                                the T/F structural classifier in analysis
+
+    Metadata on every row (enables slice-without-rejoin in notebooks):
+      family, tail, claim_type, claim_direction, template_id, open_kind,
+      sides, triangle_valid, task_type, label, label_token, split.
+
+    template_id namespace (prefixed, no collisions across families):
+      num_1…num_8       numeric_validity (existing TEMPLATES keys)
+      geom_*            geometry_claim  (12 IDs from supervisor prompts.py)
+      open_max_third    numeric_open max question
+      open_min_third    numeric_open min question
+    """
+    rng = random.Random(seed)
+    entries: list[dict] = []
+    counter = [1]
+
+    def next_id() -> str:
+        pid = f"tri_v2_{counter[0]:03d}"
+        counter[0] += 1
+        return pid
+
+    # -- geometry_claim (fixed structure: 36 rows regardless of n)
+    geom_rows = _generate_geometry_prompts_v2(next_id)
+    n_geom = len(geom_rows)  # 36
+
+    # -- numeric_open
+    n_open = max(2, round(n * numeric_open_frac))
+    if n_open % 2 != 0:
+        n_open += 1
+    open_rows = _generate_numeric_open_prompts_v2(n_open, rng, next_id)
+
+    # -- numeric_validity: fill the remainder
+    n_numeric = n - n_geom - n_open
+    if n_numeric < 6:
+        raise ValueError(
+            f"n={n} too small for geometry ({n_geom}) + open ({n_open}) rows."
+        )
+    # Divide evenly across 3 tails; each tail gets n_per_tail_half true + same false
+    n_per_tail = n_numeric // 3
+    if n_per_tail % 2 != 0:
+        n_per_tail -= 1
+    n_per_tail_half = n_per_tail // 2
+    numeric_rows = _generate_numeric_validity_prompts_v2(n_per_tail_half, rng, next_id)
+
+    entries = geom_rows + open_rows + numeric_rows
+    rng.shuffle(entries)
+
+    # Renumber sequentially after shuffle.
+    counter[0] = 1
+    for entry in entries:
+        entry["prompt_id"] = next_id()
+
+    return entries
+
+
+def summarize_v2(prompts: list[dict]) -> None:
+    """Print a breakdown by (family, tail, label) for a v2 prompt set."""
+    from collections import Counter
+    c: Counter = Counter()
+    for p in prompts:
+        key = (
+            p.get("family", "?"),
+            p.get("tail", "?"),
+            str(p.get("label", "?")),
+        )
+        c[key] += 1
+    print(f"{'family':<22} {'tail':<18} {'label':<8} {'n':>5}")
+    print("-" * 60)
+    for (family, tail, label), cnt in sorted(c.items()):
+        print(f"{family:<22} {tail:<18} {label:<8} {cnt:>5}")
+    print(f"\nTotal: {len(prompts)}")

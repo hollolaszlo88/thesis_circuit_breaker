@@ -6,7 +6,8 @@ Superset diagnostic schema (backward-compatible):
 
 Fixed constants (never change between phases):
     NODE_THRESHOLD = 0.8
-    EDGE_THRESHOLD = 0.98
+    EDGE_THRESHOLD = 0.98            # legacy single edge_density metric
+    EDGE_THRESHOLD_PRUNE_CURVE = 0.99  # supervisor-aligned: fixed for the sweep
     TOP_K = 50
     TOP_K_SUPERVISOR = 20
     PRUNE_THRESHOLDS = [0.50, 0.60, 0.70, 0.80, 0.90, 0.95, 0.99]
@@ -18,6 +19,7 @@ Public API:
     save_statistics(stats, path) -> None
     append_statistic(stat, path) -> None
     aggregate_statistics(stats) -> dict
+    _flatten_nested(stat) -> dict
 """
 
 from __future__ import annotations
@@ -33,8 +35,33 @@ N_LAYERS = 26
 TOP_K = 50               # used for legacy top50_features field
 TOP_K_SUPERVISOR = 20   # used for supervisor topk20 block
 NODE_THRESHOLD = 0.8
-EDGE_THRESHOLD = 0.98
+EDGE_THRESHOLD = 0.98   # legacy single edge_density metric (unchanged)
+EDGE_THRESHOLD_PRUNE_CURVE = 0.99  # supervisor protocol: fixed edge threshold for the survival curve
 PRUNE_THRESHOLDS = [0.50, 0.60, 0.70, 0.80, 0.90, 0.95, 0.99]
+
+
+# ── Label normalisation ────────────────────────────────────────────────────────
+
+def _binary_label_true(label: Any) -> bool:
+    """Interpret a binary label as a Python bool.
+
+    Accepts: True/False (bool), 1/0 (int), "true"/"false" (str, case-insensitive).
+    Raises ValueError for anything else so bugs surface early.
+    """
+    if isinstance(label, bool):
+        return label
+    if isinstance(label, int):
+        return bool(label)
+    if isinstance(label, str):
+        low = label.strip().lower()
+        if low == "true":
+            return True
+        if low == "false":
+            return False
+    raise ValueError(
+        f"Cannot interpret {label!r} as a binary label. "
+        "Expected bool, 0/1, or 'true'/'false' string."
+    )
 
 
 # ── Statistics computation ─────────────────────────────────────────────────────
@@ -55,6 +82,13 @@ def compute_statistics(
 
     Returns the output schema dict. Missing / failed metrics stored as None.
     Schema is extend-only: all legacy keys preserved, supervisor keys appended.
+
+    Metadata passthrough
+    --------------------
+    All sliceable dimensions from prompt_entry are written top-level so that
+    analysis notebooks can slice/filter without rejoining the original JSONL:
+      family, tail, claim_type, claim_direction, template_id, open_kind, sides,
+      triangle_valid, task_type, label, label_token.
     """
     from circuit_tracer.utils.demo_utils import get_top_features
 
@@ -67,8 +101,17 @@ def compute_statistics(
         "task_type": task_type,
         "label": prompt_entry["label"],
         "label_token": prompt_entry["label_token"],
-        "template_id": prompt_entry["template_id"],
+        "template_id": prompt_entry.get("template_id"),
         "attribution_succeeded": False,
+
+        # ── v2 sliceable dimensions (passthrough) ─────────────────────────────
+        "family": prompt_entry.get("family"),
+        "tail": prompt_entry.get("tail"),
+        "claim_type": prompt_entry.get("claim_type"),
+        "claim_direction": prompt_entry.get("claim_direction"),
+        "open_kind": prompt_entry.get("open_kind"),
+        "sides": prompt_entry.get("sides"),
+        "triangle_valid": prompt_entry.get("triangle_valid"),
 
         # ── verdict probabilities (original) ──────────────────────────────────
         "prob_true": None,
@@ -95,12 +138,11 @@ def compute_statistics(
         "mean_error_node_weight": None,
 
         # ── NEW: layer scalar summary ──────────────────────────────────────────
-        # Scalars derived from the active-feature layer histogram
         "layer_stats": None,          # {mean, std, median, entropy_bits}
 
-        # ── NEW: pruning survival curve ───────────────────────────────────────
-        # 7-entry list: one per threshold in PRUNE_THRESHOLDS
-        # Each entry: {threshold, n_nodes_kept, n_edges_kept, edge_density}
+        # ── NEW: pruning survival curve (supervisor protocol) ─────────────────
+        # node_threshold swept over PRUNE_THRESHOLDS; edge_threshold fixed at 0.99
+        # 7-entry list; each: {threshold, n_nodes_kept, n_edges_kept, edge_density}
         "prune_curve": None,
 
         # ── NEW: supervisor top-K=20 block ────────────────────────────────────
@@ -126,7 +168,9 @@ def compute_statistics(
                     prob_false = p
             result["prob_true"] = prob_true
             result["prob_false"] = prob_false
-            result["prob_target"] = prob_true if prompt_entry["label"] else prob_false
+            # Use normalised bool to avoid Python truthiness bug on string labels.
+            label_is_true = _binary_label_true(prompt_entry["label"])
+            result["prob_target"] = prob_true if label_is_true else prob_false
             if prob_true is not None and prob_false is not None:
                 result["logit_gap"] = float(
                     math.log(prob_true + eps) - math.log(prob_false + eps)
@@ -172,8 +216,6 @@ def compute_statistics(
         result["layer_entropy"] = float(-np.sum(dist_arr * np.log(dist_arr + eps_e)))
 
         # ── NEW: layer scalar summary ──────────────────────────────────────────
-        # Build from active layer histogram using full active_features tensor
-        # (not just top-K) for faithful representation of the whole graph
         all_layers = graph.active_features[:, 0].cpu().numpy().astype(int)
         layer_full_counts = np.bincount(all_layers, minlength=N_LAYERS).astype(float)
         layer_full_norm = layer_full_counts / layer_full_counts.sum() if layer_full_counts.sum() > 0 else layer_full_counts
@@ -181,10 +223,8 @@ def compute_statistics(
 
         layer_mean = float(np.sum(layer_indices * layer_full_norm))
         layer_std = float(np.sqrt(np.sum(layer_full_norm * (layer_indices - layer_mean) ** 2)))
-        # weighted median
         cum = np.cumsum(layer_full_norm)
         median_layer = float(layer_indices[np.searchsorted(cum, 0.5)])
-        # entropy in bits
         ent_bits = float(-np.sum(layer_full_norm * np.log2(layer_full_norm + 1e-12)))
         result["layer_stats"] = {
             "mean": layer_mean,
@@ -193,7 +233,7 @@ def compute_statistics(
             "entropy_bits": ent_bits,
         }
 
-        # ── Edge density at fixed threshold (original) ─────────────────────────
+        # ── Edge density at fixed threshold (original, unchanged) ──────────────
         try:
             from circuit_tracer.graph import prune_graph
             pres = prune_graph(graph, node_threshold=NODE_THRESHOLD, edge_threshold=EDGE_THRESHOLD)
@@ -205,13 +245,18 @@ def compute_statistics(
         except Exception:
             result["edge_density"] = None
 
-        # ── NEW: pruning survival curve ───────────────────────────────────────
+        # ── NEW: pruning survival curve (supervisor protocol) ─────────────────
+        # Sweep node_threshold; edge_threshold is fixed at EDGE_THRESHOLD_PRUNE_CURVE.
         try:
             from circuit_tracer.graph import prune_graph
             curve = []
             for thresh in PRUNE_THRESHOLDS:
                 try:
-                    pr = prune_graph(graph, node_threshold=thresh, edge_threshold=thresh)
+                    pr = prune_graph(
+                        graph,
+                        node_threshold=thresh,
+                        edge_threshold=EDGE_THRESHOLD_PRUNE_CURVE,
+                    )
                     nm, em = pr.node_mask, pr.edge_mask
                     n_n = int(nm.sum().item())
                     n_e = int(em.sum().item())
@@ -241,7 +286,6 @@ def compute_statistics(
             abs20 = np.abs(scores20_arr)
 
             score_total = float(np.sum(abs20))
-            # Gini coefficient of absolute scores
             if len(abs20) > 1 and abs20.sum() > 0:
                 sorted_abs = np.sort(abs20)
                 n = len(sorted_abs)
@@ -250,7 +294,6 @@ def compute_statistics(
             else:
                 gini = 0.0
 
-            # layer histogram for top-20
             lh = [0] * N_LAYERS
             for (layer, _pos, _feat) in features20:
                 if 0 <= layer < N_LAYERS:
@@ -307,7 +350,6 @@ def _compute_error_node_weight(graph: Any, node_scores: Any) -> float | None:
         if len(idx) > 0:
             return float(np.mean(np.abs(scores_arr[idx])))
 
-    # Fallback: last N_LAYERS entries are error nodes by convention
     if len(scores_arr) >= N_LAYERS:
         return float(np.mean(np.abs(scores_arr[-N_LAYERS:])))
 
@@ -334,14 +376,12 @@ def load_statistics(path: str | Path) -> list[dict]:
     if not raw.strip():
         return []
 
-    # Primary format: JSON array.
     try:
         data = json.loads(raw)
         if isinstance(data, list):
             return data
         raise ValueError(f"Expected a JSON list at {path}, got {type(data)}")
     except json.JSONDecodeError:
-        # Fallback: JSONL (useful if an interrupted write left line-based data).
         rows: list[dict] = []
         for i, line in enumerate(raw.splitlines(), start=1):
             stripped = line.strip()
@@ -407,8 +447,15 @@ _SCALAR_METRICS = [
 
 
 def _flatten_nested(stat: dict) -> dict:
-    """Flatten nested supervisor blocks into scalar keys for aggregation."""
+    """Flatten nested supervisor blocks into scalar keys for aggregation/classifiers.
+
+    Expanded in v2 to also expose prune-curve scalars per threshold:
+      n_kept_at_0.50, n_edges_at_0.50, density_at_0.50 … (one triple per threshold)
+    Column naming matches supervisor analyze.py conventions so one classifier
+    code path works across both outputs.
+    """
     flat = dict(stat)
+
     ls = stat.get("layer_stats") or {}
     flat["layer_stats_mean"] = ls.get("mean")
     flat["layer_stats_std"] = ls.get("std")
@@ -418,6 +465,20 @@ def _flatten_nested(stat: dict) -> dict:
     t20 = stat.get("topk20") or {}
     flat["topk20_score_total"] = t20.get("score_total")
     flat["topk20_score_gini"] = t20.get("score_gini")
+
+    # Explode prune_curve list into per-threshold scalars.
+    # Naming: n_kept_at_0.50, density_at_0.50 (matches supervisor analyze.py).
+    curve = stat.get("prune_curve") or []
+    for pt in curve:
+        if not isinstance(pt, dict):
+            continue
+        t = pt.get("threshold")
+        if t is None:
+            continue
+        key = f"{t:.2f}"
+        flat[f"n_kept_at_{key}"] = pt.get("n_nodes_kept")
+        flat[f"n_edges_at_{key}"] = pt.get("n_edges_kept")
+        flat[f"density_at_{key}"] = pt.get("edge_density")
 
     return flat
 
@@ -436,7 +497,16 @@ def aggregate_statistics(stats: list[dict]) -> dict:
 
     flat_succeeded = [_flatten_nested(s) for s in succeeded]
 
-    for metric in _SCALAR_METRICS:
+    # Scalar metrics listed explicitly + any prune-curve scalars found in data.
+    prune_keys: list[str] = []
+    if flat_succeeded:
+        for key in flat_succeeded[0]:
+            if key.startswith("n_kept_at_") or key.startswith("density_at_"):
+                prune_keys.append(key)
+
+    all_metrics = _SCALAR_METRICS + sorted(set(prune_keys))
+
+    for metric in all_metrics:
         vals = [s[metric] for s in flat_succeeded if s.get(metric) is not None]
         if vals:
             arr = np.array(vals, dtype=float)
@@ -453,10 +523,10 @@ def aggregate_statistics(stats: list[dict]) -> dict:
         else:
             result[metric] = None
 
-    # Aggregate prune_curve per threshold across all prompts
+    # Aggregate prune_curve per threshold across all prompts.
     all_curves = [s.get("prune_curve") for s in succeeded if s.get("prune_curve")]
     if all_curves:
-        curve_agg = {}
+        curve_agg: dict[float, dict] = {}
         for entry in all_curves:
             for pt in entry:
                 t = pt["threshold"]
