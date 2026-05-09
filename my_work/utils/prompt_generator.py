@@ -1,13 +1,13 @@
 """
 prompt_generator.py — Triangle inequality dataset generation.
 
-Constants (from plan, never change):
+Constants (from plan, never change for binary labels):
     TOKEN_TRUE  = " True"   (vocab 5569)
     TOKEN_FALSE = " False"  (vocab 7662)
 
 Schema fields in every generated entry:
     task_type    : "binary"  → label is True/False, attribution targets [True, False]
-                   "numeric" → label is an integer string (e.g. " 9"), single target
+                   "numeric" → label is an integer (e.g. 9), single target
     label_token  : the correct next token (e.g. " True", " False", " 9")
 
 Public API:
@@ -38,10 +38,13 @@ TEMPLATES: dict[int | str, str] = {
     6: "For sides {a} and {b}, the third side {can_phrase} {c} (just below maximum). Answer:",
     7: "For sides {a} and {b}, the third side {can_phrase} {c} (minimum boundary case). Answer:",
     8: "For sides {a} and {b}, the third side {can_phrase} {c} (just above minimum). Answer:",
+    "N1": "For a triangle with sides {a} and {b}, what is the largest integer value the third side can take? Answer:",
 }
 
 TEMPLATES_GENERAL = [1, 2, 3, 4]
 TEMPLATES_BOUNDARY = [5, 6, 7, 8]
+TEMPLATES_NUMERIC = ["N1"]
+TOKEN_NUMERIC_9 = " 9"
 
 
 # ── Ground-truth verification ──────────────────────────────────────────────────
@@ -142,6 +145,8 @@ def _build_prompt(
     claim_type: Literal["holds", "does_not_hold"],
 ) -> str:
     tmpl = TEMPLATES[template_id]
+    if template_id in TEMPLATES_NUMERIC:
+        return tmpl.format(a=a, b=b)
     can_phrase = "can be" if claim_type == "holds" else "cannot be"
     possible_phrase = "possible" if claim_type == "holds" else "impossible"
     allowable_phrase = "an allowable" if claim_type == "holds" else "not an allowable"
@@ -153,6 +158,30 @@ def _build_prompt(
         possible_phrase=possible_phrase,
         allowable_phrase=allowable_phrase,
     )
+
+
+def _make_numeric_entry(
+    prompt_id: str,
+    a: int,
+    b: int,
+    template_id: int | str = "N1",
+) -> dict:
+    # Largest integer third side for strict triangle inequality is a+b-1.
+    c_max = a + b - 1
+    prompt = _build_prompt(a, b, c_max, template_id, "holds")
+    label_token = f" {c_max}"
+    return {
+        "prompt_id": prompt_id,
+        "prompt": prompt,
+        "task_type": "numeric",
+        "label": c_max,
+        "label_token": label_token,
+        "sides": [a, b, None],
+        "triangle_valid": None,
+        "template_id": template_id,
+        "claim_direction": "max_third_side",
+        "split": None,  # filled in by split_dataset
+    }
 
 
 def _make_entry(
@@ -182,21 +211,101 @@ def _make_entry(
 
 # ── Main generator ─────────────────────────────────────────────────────────────
 
-def generate_triangle_prompts(n: int = 300, seed: int = 42) -> list[dict]:
-    """
-    Generate exactly n balanced (50% True, 50% False) triangle inequality prompts.
-
-    Composition (balanced and compatible with existing pipeline):
-    - Exactly 10% degenerate / invalid triples across the whole set.
-    - 50% label=True and 50% label=False.
-    - Prompts are feasibility-style claims that end with "Answer:" and do not
-      include explicit "True or False" formatting instructions.
-    """
-    rng = random.Random(seed)
-
+def _generate_binary_prompts(n: int, rng: random.Random, id_fn) -> list[dict]:
+    """Generate only binary feasibility prompts, balanced by True/False labels."""
     n_true = n // 2
     n_false = n - n_true
-    n_degenerate = round(n * 0.10)  # fixed 10%
+    n_degenerate = round(n * 0.10)  # fixed 10% among binary prompts
+    entries: list[dict] = []
+
+    n_true_boundary = max(1, n_true // 10)
+    n_false_boundary = max(1, n_false // 10)
+    n_true_via_degenerate = n_degenerate // 2
+    n_false_via_degenerate = max(0, n_degenerate - n_true_via_degenerate - n_false_boundary)
+    n_true_via_valid = n_true - n_true_boundary - n_true_via_degenerate
+    n_false_via_valid = n_false - n_false_boundary - n_false_via_degenerate
+
+    for _ in range(n_true_via_valid):
+        a, b, c = _generate_valid_triple(rng)
+        t_id = rng.choice(TEMPLATES_GENERAL)
+        entries.append(_make_entry(id_fn(), a, b, c, t_id, "holds", True))
+
+    for _ in range(n_true_via_degenerate):
+        a, b, c = _generate_degenerate_triple(rng)
+        t_id = rng.choice(TEMPLATES_GENERAL)
+        entries.append(_make_entry(id_fn(), a, b, c, t_id, "does_not_hold", False))
+
+    for _ in range(n_true_boundary):
+        a, b, _ = _generate_valid_triple(rng)
+        if rng.random() < 0.5:
+            c = a + b - 1
+            t_id = 6
+        else:
+            c = abs(a - b) + 1
+            t_id = 8
+        entries.append(_make_entry(id_fn(), a, b, c, t_id, "holds", _triangle_valid(a, b, c)))
+
+    for _ in range(n_false_via_degenerate):
+        a, b, c = _generate_degenerate_triple(rng)
+        t_id = rng.choice(TEMPLATES_GENERAL)
+        entries.append(_make_entry(id_fn(), a, b, c, t_id, "holds", False))
+
+    for _ in range(n_false_via_valid):
+        a, b, c = _generate_valid_triple(rng)
+        t_id = rng.choice(TEMPLATES_GENERAL)
+        entries.append(_make_entry(id_fn(), a, b, c, t_id, "does_not_hold", True))
+
+    for _ in range(n_false_boundary):
+        a, b, _ = _generate_valid_triple(rng)
+        if rng.random() < 0.5:
+            c = a + b
+            t_id = 5
+        else:
+            c = abs(a - b)
+            t_id = 7
+        entries.append(_make_entry(id_fn(), a, b, c, t_id, "holds", _triangle_valid(a, b, c)))
+
+    assert len(entries) == n, f"Expected {n} binary prompts, got {len(entries)}"
+    n_true_actual = sum(1 for e in entries if e["label"])
+    n_false_actual = sum(1 for e in entries if not e["label"])
+    assert n_true_actual == n_true, f"True count mismatch: {n_true_actual} != {n_true}"
+    assert n_false_actual == n_false, f"False count mismatch: {n_false_actual} != {n_false}"
+    return entries
+
+
+def _generate_numeric_prompts(n: int, rng: random.Random, id_fn) -> list[dict]:
+    """
+    Generate numeric prompts with controlled single-token target ' 9'.
+    We pick (a,b) pairs with a+b=10 so max integer third side is always 9.
+    """
+    entries: list[dict] = []
+    ab_pairs = [(1, 9), (2, 8), (3, 7), (4, 6), (5, 5), (6, 4), (7, 3), (8, 2), (9, 1)]
+    for _ in range(n):
+        a, b = rng.choice(ab_pairs)
+        entry = _make_numeric_entry(id_fn(), a, b, "N1")
+        assert entry["label_token"] == TOKEN_NUMERIC_9, f"Unexpected numeric target: {entry['label_token']}"
+        entries.append(entry)
+    return entries
+
+
+def generate_triangle_prompts(
+    n: int = 300,
+    seed: int = 42,
+    numeric_frac: float = 0.2,
+) -> list[dict]:
+    """
+    Generate exactly n mixed triangle-inequality prompts:
+      - binary feasibility prompts (True/False token targets)
+      - numeric max-third-side prompts (single-token numeric targets)
+
+    Composition:
+    - numeric_frac controls the numeric share (default 20%).
+    - Binary subset is exactly 50/50 True/False.
+    - Binary subset keeps ~10% degenerate / invalid triples.
+    - Numeric subset currently uses fixed target token ' 9' for controlled
+      attribution comparisons.
+    """
+    rng = random.Random(seed)
 
     entries: list[dict] = []
     counter = 1
@@ -207,59 +316,17 @@ def generate_triangle_prompts(n: int = 300, seed: int = 42) -> list[dict]:
         counter += 1
         return pid
 
-    # ── True prompts ────────────────────────────────────────────────────────────
-    n_true_boundary = max(1, n_true // 10)
-    n_false_boundary = max(1, n_false // 10)
-    n_true_via_degenerate = n_degenerate // 2
-    n_false_via_degenerate = max(0, n_degenerate - n_true_via_degenerate - n_false_boundary)
-    n_true_via_valid = n_true - n_true_boundary - n_true_via_degenerate
-    n_false_via_valid = n_false - n_false_boundary - n_false_via_degenerate
+    n_numeric = int(round(n * numeric_frac))
+    n_binary = n - n_numeric
+    if n_binary < 2:
+        raise ValueError("numeric_frac too high: need at least 2 binary prompts")
+    # Keep binary perfectly balanced.
+    if n_binary % 2 != 0:
+        n_binary -= 1
+        n_numeric += 1
 
-    # True regular (valid triple, positive claim)
-    for _ in range(n_true_via_valid):
-        a, b, c = _generate_valid_triple(rng)
-        t_id = rng.choice(TEMPLATES_GENERAL)
-        entries.append(_make_entry(next_id(), a, b, c, t_id, "holds", True))
-
-    # True via degenerate (invalid triple, negative claim)
-    for _ in range(n_true_via_degenerate):
-        a, b, c = _generate_degenerate_triple(rng)
-        t_id = rng.choice(TEMPLATES_GENERAL)
-        entries.append(_make_entry(next_id(), a, b, c, t_id, "does_not_hold", False))
-
-    # Boundary true: c=a+b-1 and c=|a-b|+1
-    for _ in range(n_true_boundary):
-        a, b, _ = _generate_valid_triple(rng)
-        if rng.random() < 0.5:
-            c = a + b - 1
-            t_id = 6
-        else:
-            c = abs(a - b) + 1
-            t_id = 8
-        entries.append(_make_entry(next_id(), a, b, c, t_id, "holds", _triangle_valid(a, b, c)))
-
-    # ── False prompts ────────────────────────────────────────────────────────────
-    # False regular (valid triple, negative claim)
-    for _ in range(n_false_via_degenerate):
-        a, b, c = _generate_degenerate_triple(rng)
-        t_id = rng.choice(TEMPLATES_GENERAL)
-        entries.append(_make_entry(next_id(), a, b, c, t_id, "holds", False))
-
-    for _ in range(n_false_via_valid):
-        a, b, c = _generate_valid_triple(rng)
-        t_id = rng.choice(TEMPLATES_GENERAL)
-        entries.append(_make_entry(next_id(), a, b, c, t_id, "does_not_hold", True))
-
-    # Boundary false: c=a+b and c=|a-b|
-    for _ in range(n_false_boundary):
-        a, b, _ = _generate_valid_triple(rng)
-        if rng.random() < 0.5:
-            c = a + b
-            t_id = 5
-        else:
-            c = abs(a - b)
-            t_id = 7
-        entries.append(_make_entry(next_id(), a, b, c, t_id, "holds", _triangle_valid(a, b, c)))
+    entries.extend(_generate_binary_prompts(n_binary, rng, next_id))
+    entries.extend(_generate_numeric_prompts(n_numeric, rng, next_id))
 
     # ── Shuffle and renumber ────────────────────────────────────────────────────
     rng.shuffle(entries)
@@ -267,10 +334,6 @@ def generate_triangle_prompts(n: int = 300, seed: int = 42) -> list[dict]:
         entry["prompt_id"] = f"tri_{i:03d}"
 
     assert len(entries) == n, f"Expected {n} prompts, got {len(entries)}"
-    n_true_actual = sum(1 for e in entries if e["label"])
-    n_false_actual = sum(1 for e in entries if not e["label"])
-    assert n_true_actual == n_true, f"True count mismatch: {n_true_actual} != {n_true}"
-    assert n_false_actual == n_false, f"False count mismatch: {n_false_actual} != {n_false}"
 
     return entries
 
@@ -285,7 +348,8 @@ def split_dataset(
     seed: int = 42,
 ) -> dict[str, list[dict]]:
     """
-    Split prompts into train / eval / analysis sets, stratified by label.
+    Split prompts into train / eval / analysis sets, stratified by task type.
+    Within binary prompts, keep True/False balance stratified as well.
 
     Returns dict with keys 'train', 'eval', 'analysis', each a list of entries
     with 'split' field set.
@@ -295,11 +359,13 @@ def split_dataset(
 
     rng = random.Random(seed)
 
-    true_prompts = [e for e in prompts if e["label"]]
-    false_prompts = [e for e in prompts if not e["label"]]
+    binary_true = [e for e in prompts if e.get("task_type", "binary") == "binary" and bool(e["label"])]
+    binary_false = [e for e in prompts if e.get("task_type", "binary") == "binary" and not bool(e["label"])]
+    numeric = [e for e in prompts if e.get("task_type", "binary") == "numeric"]
 
-    rng.shuffle(true_prompts)
-    rng.shuffle(false_prompts)
+    rng.shuffle(binary_true)
+    rng.shuffle(binary_false)
+    rng.shuffle(numeric)
 
     def _split_list(lst: list, f_train: float, f_eval: float) -> tuple:
         n = len(lst)
@@ -307,16 +373,17 @@ def split_dataset(
         n_eval = round(n * f_eval)
         return lst[:n_train], lst[n_train:n_train + n_eval], lst[n_train + n_eval:]
 
-    t_train, t_eval, t_analysis = _split_list(true_prompts, train_frac, eval_frac)
-    f_train, f_eval, f_analysis = _split_list(false_prompts, train_frac, eval_frac)
+    t_train, t_eval, t_analysis = _split_list(binary_true, train_frac, eval_frac)
+    f_train, f_eval, f_analysis = _split_list(binary_false, train_frac, eval_frac)
+    n_train, n_eval, n_analysis = _split_list(numeric, train_frac, eval_frac)
 
     result: dict[str, list[dict]] = {"train": [], "eval": [], "analysis": []}
-    for split_name, true_part, false_part in [
-        ("train", t_train, f_train),
-        ("eval", t_eval, f_eval),
-        ("analysis", t_analysis, f_analysis),
+    for split_name, true_part, false_part, numeric_part in [
+        ("train", t_train, f_train, n_train),
+        ("eval", t_eval, f_eval, n_eval),
+        ("analysis", t_analysis, f_analysis, n_analysis),
     ]:
-        combined = true_part + false_part
+        combined = true_part + false_part + numeric_part
         rng.shuffle(combined)
         for entry in combined:
             entry["split"] = split_name
