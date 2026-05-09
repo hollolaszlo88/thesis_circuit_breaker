@@ -21,48 +21,22 @@ from typing import Literal
 TOKEN_TRUE = " True"
 TOKEN_FALSE = " False"
 
-# Templates 1–3 and 5–7 support both True and False claim directions.
-# Template 4 is always True (triangle inequality always holds for valid triangles).
-# Template 4b is the negated variant (for False direction on degenerate triples).
+# Templates are phrased as triangle-inequality feasibility claims and always
+# terminate with "Answer:". We intentionally avoid "True or False" instructions
+# in the prompt text to reduce formatting pressure on the model.
 TEMPLATES: dict[int | str, str] = {
-    1: "Statement: For a triangle with sides {a}, {b}, and {c}, "
-       "the sum of any two sides is {comparison} the third side. Answer:",
-
-    2: "Statement: For a triangle with sides {a}, {b}, and {c}, "
-       "the sum of any two sides is {comparison} the third side. "
-       "Answer with exactly one word, True or False:",
-
-    3: "Is it true that for a triangle with sides {a}, {b}, and {c}, "
-       "the sum of any two sides is {comparison} the third side? Answer:",
-
-    4: "Mathematical claim: Given side lengths {a}, {b}, {c}, "
-       "the triangle inequality holds: each side is strictly less than "
-       "the sum of the other two. True or False?",
-
-    "4b": "Mathematical claim: Given side lengths {a}, {b}, {c}, "
-          "the triangle inequality does NOT hold. True or False?",
-
-    5: "A triangle has sides of length {a}, {b}, and {c}. "
-       "Someone claims that the sum of any two sides is {comparison} the third. "
-       "Is this claim correct? Answer:",
-
-    6: "Consider a triangle with side lengths {a}, {b}, and {c}. "
-       "Is it correct that the sum of any two sides is {comparison} the third side? "
-       "Respond True or False:",
-
-    7: "Mathematical statement: For side lengths {a}, {b}, {c}, "
-       "we have that the sum of any two sides is {comparison} the third. "
-       "Is this statement true? Answer:",
+    1: "There {can_phrase} a triangle with side lengths {a}, {b}, and {c}. Answer:",
+    2: "A triangle with sides {a}, {b}, and {c} is {possible_phrase}. Answer:",
+    3: "For a triangle with sides {a} and {b}, the third side {can_phrase} {c}. Answer:",
+    4: "Given sides {a} and {b}, {c} is {allowable_phrase} third side for a triangle. Answer:",
+    5: "For sides {a} and {b}, the third side {can_phrase} {c} (maximum boundary case). Answer:",
+    6: "For sides {a} and {b}, the third side {can_phrase} {c} (just below maximum). Answer:",
+    7: "For sides {a} and {b}, the third side {can_phrase} {c} (minimum boundary case). Answer:",
+    8: "For sides {a} and {b}, the third side {can_phrase} {c} (just above minimum). Answer:",
 }
 
-# Templates that can produce False prompts (exclude template 4 which is always True).
-# Template 4b can produce True prompts on degenerate triples.
-TEMPLATES_BIDIRECTIONAL = [1, 2, 3, 5, 6, 7]
-TEMPLATES_TRUE_ONLY = [4]
-TEMPLATES_4B = ["4b"]
-
-COMPARISON_GREATER = "greater than"
-COMPARISON_LESS = "less than"
+TEMPLATES_GENERAL = [1, 2, 3, 4]
+TEMPLATES_BOUNDARY = [5, 6, 7, 8]
 
 
 # ── Ground-truth verification ──────────────────────────────────────────────────
@@ -160,12 +134,20 @@ def _build_prompt(
     b: int,
     c: int,
     template_id: int | str,
-    comparison: str,
+    claim_type: Literal["holds", "does_not_hold"],
 ) -> str:
     tmpl = TEMPLATES[template_id]
-    if "{comparison}" in tmpl:
-        return tmpl.format(a=a, b=b, c=c, comparison=comparison)
-    return tmpl.format(a=a, b=b, c=c)
+    can_phrase = "can be" if claim_type == "holds" else "cannot be"
+    possible_phrase = "possible" if claim_type == "holds" else "impossible"
+    allowable_phrase = "an allowable" if claim_type == "holds" else "not an allowable"
+    return tmpl.format(
+        a=a,
+        b=b,
+        c=c,
+        can_phrase=can_phrase,
+        possible_phrase=possible_phrase,
+        allowable_phrase=allowable_phrase,
+    )
 
 
 def _make_entry(
@@ -178,8 +160,7 @@ def _make_entry(
     triangle_valid: bool,
 ) -> dict:
     label = verify_triangle_claim(a, b, c, claim_type)
-    comparison = COMPARISON_GREATER if claim_type == "holds" else COMPARISON_LESS
-    prompt = _build_prompt(a, b, c, template_id, comparison)
+    prompt = _build_prompt(a, b, c, template_id, claim_type)
     return {
         "prompt_id": prompt_id,
         "prompt": prompt,
@@ -188,7 +169,7 @@ def _make_entry(
         "sides": [a, b, c],
         "triangle_valid": triangle_valid,
         "template_id": template_id,
-        "claim_direction": "greater_than" if claim_type == "holds" else "less_than",
+        "claim_direction": "possible" if claim_type == "holds" else "not_possible",
         "split": None,  # filled in by split_dataset
     }
 
@@ -199,17 +180,11 @@ def generate_triangle_prompts(n: int = 300, seed: int = 42) -> list[dict]:
     """
     Generate exactly n balanced (50% True, 50% False) triangle inequality prompts.
 
-    Composition:
+    Composition (balanced and compatible with existing pipeline):
     - Exactly 10% degenerate / invalid triples across the whole set.
-    - True prompts: valid triples with claim_type='holds' (template 1-7, 4).
-    - False prompts: two sub-types:
-        * Valid triple + claim_type='does_not_hold' (templates 1-3, 5-7 only)
-        * Degenerate triple + claim_type='holds' (templates 1-3, 5-7 only)
-    - Template 4b: degenerate triple + claim_type='does_not_hold'
-      → label=True (the inequality does NOT hold is a true claim for degenerate).
-      These are counted under True prompts.
-
-    The pool is shuffled after generation. Exactly n entries are returned.
+    - 50% label=True and 50% label=False.
+    - Prompts are feasibility-style claims that end with "Answer:" and do not
+      include explicit "True or False" formatting instructions.
     """
     rng = random.Random(seed)
 
@@ -227,40 +202,58 @@ def generate_triangle_prompts(n: int = 300, seed: int = 42) -> list[dict]:
         return pid
 
     # ── True prompts ────────────────────────────────────────────────────────────
-    # Most True prompts: valid triple + claim holds
-    # Reserve ~half of degenerate budget for True side via template 4b
-    n_true_via_4b = n_degenerate // 2
-    n_true_direct = n_true - n_true_via_4b
+    n_true_boundary = max(1, n_true // 10)
+    n_false_boundary = max(1, n_false // 10)
+    n_true_via_degenerate = n_degenerate // 2
+    n_false_via_degenerate = max(0, n_degenerate - n_true_via_degenerate - n_false_boundary)
+    n_true_via_valid = n_true - n_true_boundary - n_true_via_degenerate
+    n_false_via_valid = n_false - n_false_boundary - n_false_via_degenerate
 
-    # True via template 4b (degenerate triple, claim: inequality does NOT hold)
-    tmpl4b_pool = TEMPLATES_4B
-    for _ in range(n_true_via_4b):
-        a, b, c = _generate_degenerate_triple(rng)
-        t_id = rng.choice(tmpl4b_pool)
-        entries.append(_make_entry(next_id(), a, b, c, t_id, "does_not_hold", False))
-
-    # True via valid triples, templates 1-7 and 4
-    all_true_templates = TEMPLATES_BIDIRECTIONAL + TEMPLATES_TRUE_ONLY
-    for _ in range(n_true_direct):
+    # True regular (valid triple, positive claim)
+    for _ in range(n_true_via_valid):
         a, b, c = _generate_valid_triple(rng)
-        t_id = rng.choice(all_true_templates)
+        t_id = rng.choice(TEMPLATES_GENERAL)
         entries.append(_make_entry(next_id(), a, b, c, t_id, "holds", True))
 
-    # ── False prompts ────────────────────────────────────────────────────────────
-    # Sub-type 1: valid triple + claim 'does_not_hold' (False because inequality does hold)
-    # Sub-type 2: degenerate triple + claim 'holds' (False because inequality does NOT hold)
-    n_false_via_degenerate = n_degenerate - n_true_via_4b  # remaining degenerate budget
-    n_false_via_valid = n_false - n_false_via_degenerate
+    # True via degenerate (invalid triple, negative claim)
+    for _ in range(n_true_via_degenerate):
+        a, b, c = _generate_degenerate_triple(rng)
+        t_id = rng.choice(TEMPLATES_GENERAL)
+        entries.append(_make_entry(next_id(), a, b, c, t_id, "does_not_hold", False))
 
+    # Boundary true: c=a+b-1 and c=|a-b|+1
+    for _ in range(n_true_boundary):
+        a, b, _ = _generate_valid_triple(rng)
+        if rng.random() < 0.5:
+            c = a + b - 1
+            t_id = 6
+        else:
+            c = abs(a - b) + 1
+            t_id = 8
+        entries.append(_make_entry(next_id(), a, b, c, t_id, "holds", _triangle_valid(a, b, c)))
+
+    # ── False prompts ────────────────────────────────────────────────────────────
+    # False regular (valid triple, negative claim)
     for _ in range(n_false_via_degenerate):
         a, b, c = _generate_degenerate_triple(rng)
-        t_id = rng.choice(TEMPLATES_BIDIRECTIONAL)
+        t_id = rng.choice(TEMPLATES_GENERAL)
         entries.append(_make_entry(next_id(), a, b, c, t_id, "holds", False))
 
     for _ in range(n_false_via_valid):
         a, b, c = _generate_valid_triple(rng)
-        t_id = rng.choice(TEMPLATES_BIDIRECTIONAL)
+        t_id = rng.choice(TEMPLATES_GENERAL)
         entries.append(_make_entry(next_id(), a, b, c, t_id, "does_not_hold", True))
+
+    # Boundary false: c=a+b and c=|a-b|
+    for _ in range(n_false_boundary):
+        a, b, _ = _generate_valid_triple(rng)
+        if rng.random() < 0.5:
+            c = a + b
+            t_id = 5
+        else:
+            c = abs(a - b)
+            t_id = 7
+        entries.append(_make_entry(next_id(), a, b, c, t_id, "holds", _triangle_valid(a, b, c)))
 
     # ── Shuffle and renumber ────────────────────────────────────────────────────
     rng.shuffle(entries)

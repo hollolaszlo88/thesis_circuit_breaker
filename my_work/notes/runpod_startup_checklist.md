@@ -8,6 +8,8 @@ Use this every time you launch a new pod.
 2. Open the `Jupyter Lab` link (port `8888`).
 3. If prompted for token, get it from pod terminal:
 
+8041
+
 ```bash
 jupyter server list
 ```
