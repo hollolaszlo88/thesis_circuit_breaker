@@ -36,10 +36,12 @@ TEMPLATES: dict[int | str, str] = {
     2: "A triangle with sides {a}, {b}, and {c} is {possible_phrase}. Answer:",
     3: "For a triangle with sides {a} and {b}, the third side {can_phrase} {c}. Answer:",
     4: "Given sides {a} and {b}, {c} is {allowable_phrase} third side for a triangle. Answer:",
-    5: "For sides {a} and {b}, the third side {can_phrase} {c} (maximum boundary case). Answer:",
-    6: "For sides {a} and {b}, the third side {can_phrase} {c} (just below maximum). Answer:",
-    7: "For sides {a} and {b}, the third side {can_phrase} {c} (minimum boundary case). Answer:",
-    8: "For sides {a} and {b}, the third side {can_phrase} {c} (just above minimum). Answer:",
+    # Same surface form as template 3 — no boundary hints; template_id still
+    # tags programmatically generated edge cases (c = a+b, a+b-1, |a-b|, |a-b|+1).
+    5: "For a triangle with sides {a} and {b}, the third side {can_phrase} {c}. Answer:",
+    6: "For a triangle with sides {a} and {b}, the third side {can_phrase} {c}. Answer:",
+    7: "For a triangle with sides {a} and {b}, the third side {can_phrase} {c}. Answer:",
+    8: "For a triangle with sides {a} and {b}, the third side {can_phrase} {c}. Answer:",
     "N1": "For a triangle with sides {a} and {b}, what is the largest integer value the third side can take? Answer:",
 }
 
