@@ -197,110 +197,103 @@ Track for each prompt:
  
 **Minimum success rate requirement:** At least 70% of analysis prompts must succeed attribution. If fewer than 70% succeed, do not proceed with fingerprinting — instead investigate whether the prompt set is causing unusually low CLT coverage (e.g. very short prompts, unusual token patterns) and regenerate or filter accordingly. Report the success rate explicitly in Phase 5 results. If between 70–85% succeed, note this as a limitation.
  
-### Graph Statistics Computation
- 
-For each successfully attributed prompt, compute the following metrics. Implement in `utils/graph_statistics.py`:
- 
+### Graph Statistics Computation — Superset Schema
+
+For each successfully attributed prompt, compute the following metrics. Implemented in `utils/graph_statistics.py`. The schema is **extend-only**: all legacy fields are preserved and new supervisor-requested fingerprint fields are appended. Fixed constants: `NODE_THRESHOLD=0.8`, `EDGE_THRESHOLD=0.98`, `TOP_K=50`, `TOP_K_SUPERVISOR=20`, `PRUNE_THRESHOLDS=[0.50,0.60,0.70,0.80,0.90,0.95,0.99]`, `N_LAYERS=26`.
+
+#### Legacy metrics (original, unchanged)
+
 **1. Active feature count**
 ```python
-n_active = graph.active_features.shape[0]
-```
-This is the total number of CLT features that were active on this prompt before pruning.
- 
-**2. Layer distribution of top-K features**
-Extract the top-K features by multi-hop influence score (use K=50 as default). For each of these features, record which layer it belongs to (layer index 0–25). Compute a normalized histogram over the 26 layers. Store as a list of 26 floats summing to 1.0.
- 
-```python
-features, scores = get_top_features(graph, n=50)
-layer_counts = [0] * N_LAYERS
-for (layer, pos, feat_idx) in features:
-    layer_counts[layer] += 1
-layer_dist = [c / sum(layer_counts) for c in layer_counts]
-```
- 
-**3. Edge density**
-After pruning the graph at a fixed threshold, compute edge density as the number of edges above the threshold divided by the number of node pairs.
- 
-```python
-from circuit_tracer.graph import prune_graph
-node_mask, edge_mask, _ = prune_graph(graph, node_threshold=0.8, edge_threshold=0.98)
-n_nodes = node_mask.sum().item()
-n_edges = edge_mask.sum().item()
-max_edges = n_nodes * (n_nodes - 1)
-edge_density = n_edges / max_edges if max_edges > 0 else 0.0
-```
- 
-Use `node_threshold=0.8` and `edge_threshold=0.98` consistently across all phases. Never change these thresholds between base and post-LoRA runs — the comparison depends on identical thresholds.
- 
-**4. Mean top-50 influence score**
-
-```python
-features, scores = get_top_features(graph, n=50)
-mean_top50_score = float(np.mean(scores)) if len(scores) else 0.0
+n_active = graph.active_features.shape[0]  # total before pruning
 ```
 
-**5. Influence concentration (top-10 / top-50)**
+**2. Layer distribution of top-50 features** — normalized 26-vector from `get_top_features(graph, n=50)`.
 
-```python
-top10 = np.sum(np.abs(scores[:10])) if len(scores) >= 10 else np.sum(np.abs(scores))
-top50 = np.sum(np.abs(scores)) if len(scores) else 0.0
-top10_over_top50 = float(top10 / top50) if top50 > 0 else 0.0
+**3. Edge density** — pruned at `NODE_THRESHOLD=0.8`, `EDGE_THRESHOLD=0.98`. `n_edges / (n_nodes*(n_nodes-1))`.
+
+**4. Mean top-50 influence score** — `mean(|scores|)` for top-50 features.
+
+**5. Influence concentration** — `sum(|top-10|) / sum(|top-50|)`.
+
+**6. Layer entropy** — `−Σ p·ln(p)` over the 26-layer distribution of top-50 features (nats).
+
+**7. Mean error node weight** — mean absolute influence of error nodes (transcoder residual); control variable for post-LoRA degradation check.
+
+#### Supervisor-requested fingerprint metrics (new)
+
+**8. `layer_stats`** — four scalars derived from the full active-feature layer histogram (all active features, not just top-K):
+- `mean`: weighted mean layer index
+- `std`: weighted standard deviation
+- `median`: weighted median layer
+- `entropy_bits`: entropy in bits (`−Σ p·log2(p)`)
+
+**9. `prune_curve`** — list of 7 dicts, one per threshold in `{0.50, 0.60, 0.70, 0.80, 0.90, 0.95, 0.99}`:
+```json
+{"threshold": 0.80, "n_nodes_kept": 412, "n_edges_kept": 1803, "edge_density": 0.0106}
 ```
+Density = `n_edges / (n_nodes * (n_nodes − 1))`. Enables plotting a pruning survival curve.
 
-**6. Layer entropy of top-50 distribution**
+**10. `topk20`** — supervisor top-K=20 block (features by multi-hop influence on True − False):
+- `features`: list of `[layer, pos, feat_idx, score]` for top 20 features
+- `score_total`: `Σ |scores|` for top-20
+- `score_gini`: Gini coefficient of the 20 absolute scores
+- `layer_hist`: normalized 26-vector (fraction of top-20 features per layer)
 
-```python
-eps = 1e-12
-layer_entropy = float(-np.sum(np.array(layer_dist) * np.log(np.array(layer_dist) + eps)))
-```
+#### Verdict probabilities (unchanged)
 
-**7. Mean error node weight (transcoder approximation quality)**
- 
-This is a diagnostic statistic that tracks how well the GemmaScope transcoders approximate the fine-tuned model's MLP computations. Error nodes absorb the residual discrepancy between the CLT reconstruction and the true MLP output. Higher error node weight means the transcoder is a worse approximation — and therefore the attribution graph is less faithful.
- 
-```python
-# Error nodes are the last N nodes in the graph, where N = number of layers
-# Their influence on the output logits is the mean error node weight
-node_mask, edge_mask, node_scores = prune_graph(
-    graph, node_threshold=1.0, edge_threshold=1.0  # no pruning, get all scores
-)
-# Error nodes are identifiable by their type in graph.node_types
-# Compute mean absolute influence of error nodes on the attribution target
-error_node_indices = [i for i, t in enumerate(graph.node_types) if t == "error"]
-error_node_weight = float(np.mean(np.abs(node_scores[error_node_indices].numpy())))
-```
- 
-**Note:** The exact API for accessing node types may differ — Cursor should inspect `graph` object attributes to find error nodes. If `node_types` is not available, error nodes can be identified as nodes with no incoming edges from CLT features.
- 
-Store as `mean_error_node_weight` in the output schema. This is the control variable for Phase 5: if error node weight increases substantially post-fine-tuning (e.g. more than 2x), any observed circuit changes must be interpreted with caution as they may partly reflect transcoder degradation rather than genuine circuit reorganization.
+For binary prompts: `prob_true`, `prob_false`, `logit_gap = log(p_true) − log(p_false)`.
+For numeric prompts: `prob_target` (probability of the correct single token), `logit_gap = log(p_target)`.
+
+#### Scalar summary for aggregation (51 scalars total per prompt)
+
+The flattened representation used by the logistic regression classifier:
+- legacy: `n_active_features`, `edge_density`, `mean_top50_score`, `top10_over_top50`, `layer_entropy`, `mean_error_node_weight`, `logit_gap`, `prob_target`
+- layer_stats block: `layer_stats_mean`, `layer_stats_std`, `layer_stats_median`, `layer_stats_entropy_bits`
+- topk20 block: `topk20_score_total`, `topk20_score_gini`
+- prune_curve: aggregated separately into `prune_curve_agg` in `aggregate_statistics`
  
 ### Output Schema
  
-For each prompt, write to `results/statistics/stats_base.json`:
+For each prompt, write to `results/statistics/stats_base.json` (superset — all fields present):
  
 ```json
 {
   "prompt_id": "tri_001",
   "phase": "base",
+  "task_type": "binary",
   "label": true,
   "label_token": " True",
   "template_id": 1,
+  "attribution_succeeded": true,
   "prob_true": 0.1396,
   "prob_false": 0.0311,
+  "prob_target": 0.1396,
   "logit_gap": 1.5,
-  "attribution_succeeded": true,
   "n_active_features": 23758,
   "layer_distribution": [0.02, 0.0, ...],
-  "edge_density": 0.0034,
+  "top50_features": [[16, 21, 14143, 0.0032], [20, 21, 12997, 0.0028], ...],
   "mean_top50_score": 0.00180,
   "top10_over_top50": 0.61,
   "layer_entropy": 2.11,
+  "edge_density": 0.0034,
   "mean_error_node_weight": 0.00041,
-  "top50_features": [[16, 21, 14143], [20, 21, 12997], ...]
+  "layer_stats": {"mean": 18.3, "std": 4.1, "median": 19.0, "entropy_bits": 3.82},
+  "prune_curve": [
+    {"threshold": 0.50, "n_nodes_kept": 8192, "n_edges_kept": 210000, "edge_density": 0.00313},
+    {"threshold": 0.60, "n_nodes_kept": 6100, "n_edges_kept": 140000, "edge_density": 0.00376},
+    ...
+  ],
+  "topk20": {
+    "features": [[16, 21, 14143, 0.0032], ...],
+    "score_total": 0.042,
+    "score_gini": 0.31,
+    "layer_hist": [0.0, 0.0, ..., 0.15, 0.20, ...]
+  }
 }
 ```
- 
-Store `top50_features` as a list of `[layer, pos, feat_idx]` triples — these will be used for Neuronpedia categorization in Phase 5.
+
+`top50_features` entries are `[layer, pos, feat_idx, score]` — the score field is stored for Neuronpedia categorization convenience. The `pos` field is preserved for the position heatmap analysis in Phase 6.
  
 ### Baseline Accuracy Check
  
@@ -317,11 +310,16 @@ Expected: ~50–65% accuracy on the base model. If accuracy is already above 80%
 Decide whether to proceed to LoRA by testing whether base-model structural statistics show meaningful prompt-level variation.
 
 ### Go/No-Go Criterion
-
+ 
 Proceed to LoRA only if both conditions hold:
-1. At least two primary structural metrics (from `n_active_features`, `edge_density`, `mean_top50_score`, `top10_over_top50`, `layer_entropy`) show non-trivial spread across prompts (IQR > 0 and visually non-collapsed distributions).
-2. A simple classifier (logistic regression) using structural metrics achieves above-majority performance for `correct vs incorrect` on cross-validation, or at minimum shows stable non-zero coefficients on multiple metrics.
+1. At least two scalar metrics (from the full superset: legacy + `layer_stats_*` + `topk20_*`) show non-trivial spread across prompts (IQR > 0 and visually non-collapsed distributions in `03_baseline_structural_analysis.ipynb`).
+2. A simple logistic regression classifier using the full scalar superset (12 features) achieves above-majority performance for `correct vs incorrect` on 5-fold stratified cross-validation, or at minimum shows stable non-zero coefficients on multiple metrics.
 
+Additional visual checks added in `03_baseline_structural_analysis.ipynb`:
+- Prune-curve plots (mean nodes/edges/density per threshold across prompts)
+- Top-K=20 layer histogram (mean fraction per layer across prompts)
+- `topk20_score_total` distribution by label (True vs False)
+ 
 If neither condition holds, stop and document that the structural-signal hypothesis is unsupported on this setup.
 
 ---
@@ -677,9 +675,12 @@ Must export:
 ### `utils/graph_statistics.py`
  
 Must export:
-- `compute_statistics(graph, prompt_id: str, phase: str) -> dict` — returns the output schema from Phase 2, including `mean_error_node_weight`
+- `compute_statistics(graph, prompt_entry: dict, phase: str) -> dict` — returns full superset schema (legacy + `layer_stats`, `prune_curve`, `topk20`). Robust fallbacks (`None`) on any sub-computation failure.
 - `load_statistics(path: str) -> list[dict]`
-- `aggregate_statistics(stats: list[dict]) -> dict` — mean, std, median per statistic including error node weight
+- `save_statistics(stats: list[dict], path: str) -> None`
+- `append_statistic(stat: dict, path: str) -> None` — checkpoint-style incremental save
+- `aggregate_statistics(stats: list[dict]) -> dict` — mean/std/median/IQR for all scalars (flattened via `_flatten_nested`), plus `prune_curve_agg` dict
+- `_flatten_nested(stat: dict) -> dict` — extracts `layer_stats_*` and `topk20_*` scalars for classifier/aggregation use
  
 ### `utils/neuronpedia.py`
  
