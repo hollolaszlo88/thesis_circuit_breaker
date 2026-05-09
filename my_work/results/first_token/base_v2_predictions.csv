@@ -434,3 +434,86 @@ tri_v2_244,binary, True, ,5569,235248,False
 tri_v2_245,binary, True,"
 
 ",5569,109,False
+tri_v2_246,binary, False,"
+
+",7662,109,False
+tri_v2_247,binary, True, ,5569,235248,False
+tri_v2_248,binary, True, ,5569,235248,False
+tri_v2_249,binary, False, Yes,7662,6287,False
+tri_v2_250,binary, False,"
+
+",7662,109,False
+tri_v2_251,numeric,6, ,235318,235248,False
+tri_v2_252,binary, True,"
+
+",5569,109,False
+tri_v2_253,binary, False, True,7662,5569,False
+tri_v2_254,binary, False, B,7662,599,False
+tri_v2_255,binary, False, False,7662,7662,True
+tri_v2_256,binary, True,"
+
+",5569,109,False
+tri_v2_257,binary, False,"
+
+",7662,109,False
+tri_v2_258,binary, False,"
+
+",7662,109,False
+tri_v2_259,binary, False,:,7662,235292,False
+tri_v2_260,binary, False, False,7662,7662,True
+tri_v2_261,binary, True, ,5569,235248,False
+tri_v2_262,binary, False,"
+
+",7662,109,False
+tri_v2_263,binary, False, False,7662,7662,True
+tri_v2_264,binary, True, True,5569,5569,True
+tri_v2_265,binary, True, ,5569,235248,False
+tri_v2_266,numeric,3,"
+
+",235304,109,False
+tri_v2_267,binary, True,"
+
+",5569,109,False
+tri_v2_268,binary, True,"
+
+",5569,109,False
+tri_v2_269,binary, False, False,7662,7662,True
+tri_v2_270,binary, False, B,7662,599,False
+tri_v2_271,binary, True,"
+
+",5569,109,False
+tri_v2_272,numeric,2,"
+
+",235284,109,False
+tri_v2_273,binary, True, ,5569,235248,False
+tri_v2_274,binary, False, B,7662,599,False
+tri_v2_275,binary, False, False,7662,7662,True
+tri_v2_276,binary, True, ,5569,235248,False
+tri_v2_277,binary, False, ,7662,235248,False
+tri_v2_278,binary, False, B,7662,599,False
+tri_v2_279,binary, False, False,7662,7662,True
+tri_v2_280,binary, False, False,7662,7662,True
+tri_v2_281,binary, True, yes,5569,7778,False
+tri_v2_282,binary, True, ,5569,235248,False
+tri_v2_283,binary, True, True,5569,5569,True
+tri_v2_284,binary, True, yes,5569,7778,False
+tri_v2_285,binary, False, ,7662,235248,False
+tri_v2_286,binary, False,"
+
+",7662,109,False
+tri_v2_287,binary, True, ,5569,235248,False
+tri_v2_288,binary, True, ,5569,235248,False
+tri_v2_289,binary, True,"
+
+",5569,109,False
+tri_v2_290,binary, False, ,7662,235248,False
+tri_v2_291,binary, False, ,7662,235248,False
+tri_v2_292,binary, False, B,7662,599,False
+tri_v2_293,binary, True, ,5569,235248,False
+tri_v2_294,binary, True, ,5569,235248,False
+tri_v2_295,numeric,9, ,235315,235248,False
+tri_v2_296,binary, False, False,7662,7662,True
+tri_v2_297,binary, False, no,7662,793,False
+tri_v2_298,binary, True,:,5569,235292,False
+tri_v2_299,binary, True, ,5569,235248,False
+tri_v2_300,binary, False, no,7662,793,False
