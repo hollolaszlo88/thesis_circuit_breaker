@@ -1,0 +1,271 @@
+prompt_id,task_type,expected_response,argmax_response,expected_token_id,argmax_token_id,is_correct
+tri_v3_003,binary, False,"
+
+",7662,109,False
+tri_v3_004,binary, True,"
+
+",5569,109,False
+tri_v3_005,binary, False,"
+
+",7662,109,False
+tri_v3_007,binary, False,"
+
+",7662,109,False
+tri_v3_011,binary, True,"
+
+",5569,109,False
+tri_v3_016,binary, True,"
+
+",5569,109,False
+tri_v3_017,binary, True,"
+
+",5569,109,False
+tri_v3_020,binary, False,"
+
+",7662,109,False
+tri_v3_021,binary, True,"
+
+",5569,109,False
+tri_v3_022,binary, True,"
+
+",5569,109,False
+tri_v3_025,binary, True,"
+
+",5569,109,False
+tri_v3_028,binary, True,"
+
+",5569,109,False
+tri_v3_032,binary, False,"
+
+",7662,109,False
+tri_v3_035,binary, False,"
+
+",7662,109,False
+tri_v3_036,binary, True,"
+
+",5569,109,False
+tri_v3_038,binary, True,"
+
+",5569,109,False
+tri_v3_040,binary, True,"
+
+",5569,109,False
+tri_v3_041,binary, False,"
+
+",7662,109,False
+tri_v3_045,binary, False,"
+
+",7662,109,False
+tri_v3_047,binary, True,"
+
+",5569,109,False
+tri_v3_049,binary, True,"
+
+",5569,109,False
+tri_v3_050,binary, False,"
+
+",7662,109,False
+tri_v3_054,binary, True,"
+
+",5569,109,False
+tri_v3_059,binary, True,"
+
+",5569,109,False
+tri_v3_060,binary, False,"
+
+",7662,109,False
+tri_v3_067,binary, False,"
+
+",7662,109,False
+tri_v3_070,binary, False,"
+
+",7662,109,False
+tri_v3_073,binary, False,"
+
+",7662,109,False
+tri_v3_075,binary, True,"
+
+",5569,109,False
+tri_v3_084,binary, False,"
+
+",7662,109,False
+tri_v3_086,binary, False,"
+
+",7662,109,False
+tri_v3_094,binary, True,"
+
+",5569,109,False
+tri_v3_095,binary, True,"
+
+",5569,109,False
+tri_v3_099,binary, True,"
+
+",5569,109,False
+tri_v3_103,binary, True,"
+
+",5569,109,False
+tri_v3_105,binary, True,"
+
+",5569,109,False
+tri_v3_108,binary, False,"
+
+",7662,109,False
+tri_v3_111,binary, True,"
+
+",5569,109,False
+tri_v3_112,binary, False,"
+
+",7662,109,False
+tri_v3_114,binary, False,"
+
+",7662,109,False
+tri_v3_122,binary, False,"
+
+",7662,109,False
+tri_v3_124,binary, False,"
+
+",7662,109,False
+tri_v3_125,binary, True,"
+
+",5569,109,False
+tri_v3_132,binary, True,"
+
+",5569,109,False
+tri_v3_133,binary, False,"
+
+",7662,109,False
+tri_v3_136,binary, True,"
+
+",5569,109,False
+tri_v3_141,binary, False,"
+
+",7662,109,False
+tri_v3_150,binary, True,"
+
+",5569,109,False
+tri_v3_151,binary, False,"
+
+",7662,109,False
+tri_v3_159,binary, False,"
+
+",7662,109,False
+tri_v3_162,binary, False,"
+
+",7662,109,False
+tri_v3_169,binary, True,"
+
+",5569,109,False
+tri_v3_170,binary, True,"
+
+",5569,109,False
+tri_v3_173,binary, True,"
+
+",5569,109,False
+tri_v3_177,binary, False,"
+
+",7662,109,False
+tri_v3_181,binary, False,"
+
+",7662,109,False
+tri_v3_182,binary, False,"
+
+",7662,109,False
+tri_v3_183,binary, False,"
+
+",7662,109,False
+tri_v3_189,binary, True,"
+
+",5569,109,False
+tri_v3_194,binary, True,"
+
+",5569,109,False
+tri_v3_195,binary, False,"
+
+",7662,109,False
+tri_v3_196,binary, False,"
+
+",7662,109,False
+tri_v3_198,binary, True,"
+
+",5569,109,False
+tri_v3_199,binary, True,"
+
+",5569,109,False
+tri_v3_203,binary, True,"
+
+",5569,109,False
+tri_v3_207,binary, False,"
+
+",7662,109,False
+tri_v3_209,binary, False,"
+
+",7662,109,False
+tri_v3_210,binary, True,"
+
+",5569,109,False
+tri_v3_221,binary, True,"
+
+",5569,109,False
+tri_v3_222,binary, False,"
+
+",7662,109,False
+tri_v3_224,binary, False,"
+
+",7662,109,False
+tri_v3_225,binary, False,"
+
+",7662,109,False
+tri_v3_232,binary, False,"
+
+",7662,109,False
+tri_v3_238,binary, True,"
+
+",5569,109,False
+tri_v3_239,binary, False,"
+
+",7662,109,False
+tri_v3_241,binary, False,"
+
+",7662,109,False
+tri_v3_243,binary, True,"
+
+",5569,109,False
+tri_v3_245,binary, True,"
+
+",5569,109,False
+tri_v3_246,binary, False,"
+
+",7662,109,False
+tri_v3_250,binary, False,"
+
+",7662,109,False
+tri_v3_252,binary, True,"
+
+",5569,109,False
+tri_v3_256,binary, True,"
+
+",5569,109,False
+tri_v3_257,binary, False,"
+
+",7662,109,False
+tri_v3_258,binary, False,"
+
+",7662,109,False
+tri_v3_262,binary, False,"
+
+",7662,109,False
+tri_v3_267,binary, True,"
+
+",5569,109,False
+tri_v3_268,binary, True,"
+
+",5569,109,False
+tri_v3_271,binary, True,"
+
+",5569,109,False
+tri_v3_286,binary, False,"
+
+",7662,109,False
+tri_v3_289,binary, True,"
+
+",5569,109,False
