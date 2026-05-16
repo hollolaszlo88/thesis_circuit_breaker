@@ -192,3 +192,6 @@ my_work/notebooks/4_true_false_experimentation_prompt2.pdf
 
 # Supervisor drop-in reference (large results, parallel methodology); thesis work uses my_work/
 prompt-experiments/
+my_work/notes/supervisor_takeaways_structural_lora.md
+my_work/notebooks/05_lora_comparison.html
+.gitignore
