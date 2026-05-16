@@ -1,57 +1,101 @@
 phase,category,layer,feat_idx,count,label,url
-base,geometry,1,161,73, technical descriptions of geometric objects and their properties,https://www.neuronpedia.org/gemma-2-2b/1-gemmascope-transcoder-16k/161
-base,geometry,0,14217,71,words with a positive valence and also identifies different sides in a political discussion,https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/14217
-base,geometry,0,8254,51,the word 'sides',https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/8254
-base,geometry,0,11224,48,"the word ""sides,"" potentially in the context of opposing viewpoints or groups",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/11224
-base,geometry,0,15296,32," the word ""sides""",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/15296
-base,geometry,0,13329,29,"mentions of flat shapes with measurable, geometric sides.",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/13329
-base,geometry,6,8248,9, words related to geometric shapes and mathematical analysis,https://www.neuronpedia.org/gemma-2-2b/6-gemmascope-transcoder-16k/8248
-base,geometry,16,10626,9," words and phrases related to measuring angles or distances, especially those used in optics and geometry",https://www.neuronpedia.org/gemma-2-2b/16-gemmascope-transcoder-16k/10626
-base,geometry,2,8581,8,"the word ""sides""",https://www.neuronpedia.org/gemma-2-2b/2-gemmascope-transcoder-16k/8581
-base,geometry,1,745,3," the word ""side""",https://www.neuronpedia.org/gemma-2-2b/1-gemmascope-transcoder-16k/745
-base,boolean-logic,4,12613,147, words and phrases that have to do with truth,https://www.neuronpedia.org/gemma-2-2b/4-gemmascope-transcoder-16k/12613
-base,boolean-logic,24,4640,100, text indicating assertions of truth or falsity,https://www.neuronpedia.org/gemma-2-2b/24-gemmascope-transcoder-16k/4640
-base,boolean-logic,2,1499,100,"the boolean value ""True""",https://www.neuronpedia.org/gemma-2-2b/2-gemmascope-transcoder-16k/1499
-base,boolean-logic,21,651,93,assertions and reasoning.,https://www.neuronpedia.org/gemma-2-2b/21-gemmascope-transcoder-16k/651
-base,boolean-logic,21,7787,92," mathematical language, including variables, equations, and logical deductions",https://www.neuronpedia.org/gemma-2-2b/21-gemmascope-transcoder-16k/7787
-base,boolean-logic,17,11405,91,false,https://www.neuronpedia.org/gemma-2-2b/17-gemmascope-transcoder-16k/11405
-base,boolean-logic,18,2940,85, clauses expressing an opinion or whether something is true,https://www.neuronpedia.org/gemma-2-2b/18-gemmascope-transcoder-16k/2940
-base,boolean-logic,23,7446,78," negative responses, code-related instructions, and conditional statements",https://www.neuronpedia.org/gemma-2-2b/23-gemmascope-transcoder-16k/7446
-base,boolean-logic,21,13859,70," code snippets that have properties like ""true"" or ""false"" and return values",https://www.neuronpedia.org/gemma-2-2b/21-gemmascope-transcoder-16k/13859
-base,boolean-logic,18,8253,50," the word ""True"" (and sometimes ""False"") in mathematical, logical, and political contexts",https://www.neuronpedia.org/gemma-2-2b/18-gemmascope-transcoder-16k/8253
-base,language-comparative,9,1653,112," questions, answers, and instructions involving one or more choices, particularly in a testing or software development context.",https://www.neuronpedia.org/gemma-2-2b/9-gemmascope-transcoder-16k/1653
-base,language-comparative,22,15283,12,"numerical problems, like calculations and comparisons",https://www.neuronpedia.org/gemma-2-2b/22-gemmascope-transcoder-16k/15283
-base,language-comparative,0,15094,4,"ordinal numbers, and in particular the word ""third.""",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/15094
-base,math-general,0,6051,165,"periods, spaces, and the number 1",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/6051
-base,math-general,0,11805,145, mathematical equations often containing trigonometric functions,https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/11805
-base,math-general,25,4882,123," math problems and related terms like ""derivative"" and ""term""",https://www.neuronpedia.org/gemma-2-2b/25-gemmascope-transcoder-16k/4882
-base,math-general,23,5188,115,mathematical and academic references and structures,https://www.neuronpedia.org/gemma-2-2b/23-gemmascope-transcoder-16k/5188
-base,math-general,24,1764,114, mathematical equations and expressions,https://www.neuronpedia.org/gemma-2-2b/24-gemmascope-transcoder-16k/1764
-base,math-general,22,5015,103, mathematical equations and calculations,https://www.neuronpedia.org/gemma-2-2b/22-gemmascope-transcoder-16k/5015
-base,math-general,0,9026,100,"technical documents or data, including numbers, units, and references to figures or tables.",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/9026
-base,math-general,0,11802,79," mathematical expressions, specifically those involving division, remainders, and calculations.",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/11802
-base,math-general,20,9550,51, symbolic math equations and expressions with derivatives and remainders,https://www.neuronpedia.org/gemma-2-2b/20-gemmascope-transcoder-16k/9550
-base,math-general,0,12370,51,periods that end sentences and decimal points preceding numbers,https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/12370
-base,format-template,0,16200,134,code syntax elements,https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/16200
-base,format-template,18,9094,116, direct answers of yes or no to a question,https://www.neuronpedia.org/gemma-2-2b/18-gemmascope-transcoder-16k/9094
-base,format-template,18,10940,108," question/answer pairs, particularly in a testing or development context",https://www.neuronpedia.org/gemma-2-2b/18-gemmascope-transcoder-16k/10940
-base,format-template,19,6538,76, question/answer pairs.,https://www.neuronpedia.org/gemma-2-2b/19-gemmascope-transcoder-16k/6538
-base,format-template,24,13277,72, words related to questions and requests,https://www.neuronpedia.org/gemma-2-2b/24-gemmascope-transcoder-16k/13277
-base,format-template,23,2692,69," strings that contain ""yes"" in the context of forms and question answering",https://www.neuronpedia.org/gemma-2-2b/23-gemmascope-transcoder-16k/2692
-base,format-template,0,12698,66,question-answer pairs (or just questions) and import statements,https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/12698
-base,format-template,20,10115,66," quotes and conversational excerpts, especially those containing questions and affirmations like ""yes"".",https://www.neuronpedia.org/gemma-2-2b/20-gemmascope-transcoder-16k/10115
-base,format-template,18,6735,59,code snippets and programming syntax,https://www.neuronpedia.org/gemma-2-2b/18-gemmascope-transcoder-16k/6735
-base,format-template,21,10354,50, statements against a hypothesis,https://www.neuronpedia.org/gemma-2-2b/21-gemmascope-transcoder-16k/10354
-base,other,8,6513,179,measurements of accuracy and diagnostic tools,https://www.neuronpedia.org/gemma-2-2b/8-gemmascope-transcoder-16k/6513
-base,other,24,5999,159," language related to institutions, negative situations, the internet, and programming languages",https://www.neuronpedia.org/gemma-2-2b/24-gemmascope-transcoder-16k/5999
-base,other,0,1903,135,"instances of sentences starting with ""The""",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/1903
-base,other,0,2158,135,"the word ""with""",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/2158
-base,other,0,3255,113," the word ""and""",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/3255
-base,other,0,11375,111," the word ""is""",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/11375
-base,other,14,6750,104, what appears to be garbage or noise in the text.,https://www.neuronpedia.org/gemma-2-2b/14-gemmascope-transcoder-16k/6750
-base,other,5,3992,90,the start of documentation blocks in code,https://www.neuronpedia.org/gemma-2-2b/5-gemmascope-transcoder-16k/3992
-base,other,20,12997,70,"code snippets, tags, and keywords from various programming languages",https://www.neuronpedia.org/gemma-2-2b/20-gemmascope-transcoder-16k/12997
-base,other,16,2900,66,code and configuration snippets with attributes for various systems,https://www.neuronpedia.org/gemma-2-2b/16-gemmascope-transcoder-16k/2900
+base,geometry,1,161,149, technical descriptions of geometric objects and their properties,https://www.neuronpedia.org/gemma-2-2b/1-gemmascope-transcoder-16k/161
+base,geometry,0,14217,133,words with a positive valence and also identifies different sides in a political discussion,https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/14217
+base,geometry,0,8254,97,the word 'sides',https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/8254
+base,geometry,0,11224,82,"the word ""sides,"" potentially in the context of opposing viewpoints or groups",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/11224
+base,geometry,0,15296,67," the word ""sides""",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/15296
+base,geometry,0,13329,52,"mentions of flat shapes with measurable, geometric sides.",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/13329
+base,geometry,2,8581,19,"the word ""sides""",https://www.neuronpedia.org/gemma-2-2b/2-gemmascope-transcoder-16k/8581
+base,geometry,6,8248,14, words related to geometric shapes and mathematical analysis,https://www.neuronpedia.org/gemma-2-2b/6-gemmascope-transcoder-16k/8248
+base,geometry,16,10626,13," words and phrases related to measuring angles or distances, especially those used in optics and geometry",https://www.neuronpedia.org/gemma-2-2b/16-gemmascope-transcoder-16k/10626
+base,geometry,1,745,10," the word ""side""",https://www.neuronpedia.org/gemma-2-2b/1-gemmascope-transcoder-16k/745
+base,boolean-logic,4,12613,266, words and phrases that have to do with truth,https://www.neuronpedia.org/gemma-2-2b/4-gemmascope-transcoder-16k/12613
+base,boolean-logic,21,7787,181," mathematical language, including variables, equations, and logical deductions",https://www.neuronpedia.org/gemma-2-2b/21-gemmascope-transcoder-16k/7787
+base,boolean-logic,2,1499,180,"the boolean value ""True""",https://www.neuronpedia.org/gemma-2-2b/2-gemmascope-transcoder-16k/1499
+base,boolean-logic,24,4640,179, text indicating assertions of truth or falsity,https://www.neuronpedia.org/gemma-2-2b/24-gemmascope-transcoder-16k/4640
+base,boolean-logic,21,651,173,assertions and reasoning.,https://www.neuronpedia.org/gemma-2-2b/21-gemmascope-transcoder-16k/651
+base,boolean-logic,17,11405,170,false,https://www.neuronpedia.org/gemma-2-2b/17-gemmascope-transcoder-16k/11405
+base,boolean-logic,23,7446,156," negative responses, code-related instructions, and conditional statements",https://www.neuronpedia.org/gemma-2-2b/23-gemmascope-transcoder-16k/7446
+base,boolean-logic,18,2940,149, clauses expressing an opinion or whether something is true,https://www.neuronpedia.org/gemma-2-2b/18-gemmascope-transcoder-16k/2940
+base,boolean-logic,21,13859,128," code snippets that have properties like ""true"" or ""false"" and return values",https://www.neuronpedia.org/gemma-2-2b/21-gemmascope-transcoder-16k/13859
+base,boolean-logic,24,8991,90, code snippets in various languages likely to define boolean logic,https://www.neuronpedia.org/gemma-2-2b/24-gemmascope-transcoder-16k/8991
+base,language-comparative,9,1653,209," questions, answers, and instructions involving one or more choices, particularly in a testing or software development context.",https://www.neuronpedia.org/gemma-2-2b/9-gemmascope-transcoder-16k/1653
+base,language-comparative,22,15283,24,"numerical problems, like calculations and comparisons",https://www.neuronpedia.org/gemma-2-2b/22-gemmascope-transcoder-16k/15283
+base,language-comparative,0,15094,8,"ordinal numbers, and in particular the word ""third.""",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/15094
+base,math-general,0,6051,310,"periods, spaces, and the number 1",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/6051
+base,math-general,0,11805,272, mathematical equations often containing trigonometric functions,https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/11805
+base,math-general,25,4882,235," math problems and related terms like ""derivative"" and ""term""",https://www.neuronpedia.org/gemma-2-2b/25-gemmascope-transcoder-16k/4882
+base,math-general,23,5188,209,mathematical and academic references and structures,https://www.neuronpedia.org/gemma-2-2b/23-gemmascope-transcoder-16k/5188
+base,math-general,24,1764,206, mathematical equations and expressions,https://www.neuronpedia.org/gemma-2-2b/24-gemmascope-transcoder-16k/1764
+base,math-general,0,9026,191,"technical documents or data, including numbers, units, and references to figures or tables.",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/9026
+base,math-general,22,5015,188, mathematical equations and calculations,https://www.neuronpedia.org/gemma-2-2b/22-gemmascope-transcoder-16k/5015
+base,math-general,0,11802,161," mathematical expressions, specifically those involving division, remainders, and calculations.",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/11802
+base,math-general,0,12370,103,periods that end sentences and decimal points preceding numbers,https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/12370
+base,math-general,20,9550,97, symbolic math equations and expressions with derivatives and remainders,https://www.neuronpedia.org/gemma-2-2b/20-gemmascope-transcoder-16k/9550
+base,format-template,0,16200,244,code syntax elements,https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/16200
+base,format-template,18,9094,229, direct answers of yes or no to a question,https://www.neuronpedia.org/gemma-2-2b/18-gemmascope-transcoder-16k/9094
+base,format-template,18,10940,216," question/answer pairs, particularly in a testing or development context",https://www.neuronpedia.org/gemma-2-2b/18-gemmascope-transcoder-16k/10940
+base,format-template,24,13277,149, words related to questions and requests,https://www.neuronpedia.org/gemma-2-2b/24-gemmascope-transcoder-16k/13277
+base,format-template,19,6538,145, question/answer pairs.,https://www.neuronpedia.org/gemma-2-2b/19-gemmascope-transcoder-16k/6538
+base,format-template,23,2692,131," strings that contain ""yes"" in the context of forms and question answering",https://www.neuronpedia.org/gemma-2-2b/23-gemmascope-transcoder-16k/2692
+base,format-template,20,10115,127," quotes and conversational excerpts, especially those containing questions and affirmations like ""yes"".",https://www.neuronpedia.org/gemma-2-2b/20-gemmascope-transcoder-16k/10115
+base,format-template,18,6735,123,code snippets and programming syntax,https://www.neuronpedia.org/gemma-2-2b/18-gemmascope-transcoder-16k/6735
+base,format-template,0,12698,122,question-answer pairs (or just questions) and import statements,https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/12698
+base,format-template,24,6127,96," questions and related words involving right and wrong, correctness, and procedures",https://www.neuronpedia.org/gemma-2-2b/24-gemmascope-transcoder-16k/6127
+base,other,8,6513,315,measurements of accuracy and diagnostic tools,https://www.neuronpedia.org/gemma-2-2b/8-gemmascope-transcoder-16k/6513
+base,other,24,5999,300," language related to institutions, negative situations, the internet, and programming languages",https://www.neuronpedia.org/gemma-2-2b/24-gemmascope-transcoder-16k/5999
+base,other,0,2158,263,"the word ""with""",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/2158
+base,other,0,1903,258,"instances of sentences starting with ""The""",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/1903
+base,other,14,6750,220, what appears to be garbage or noise in the text.,https://www.neuronpedia.org/gemma-2-2b/14-gemmascope-transcoder-16k/6750
+base,other,0,11375,220," the word ""is""",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/11375
+base,other,0,3255,216," the word ""and""",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/3255
+base,other,5,3992,173,the start of documentation blocks in code,https://www.neuronpedia.org/gemma-2-2b/5-gemmascope-transcoder-16k/3992
+base,other,20,12997,132,"code snippets, tags, and keywords from various programming languages",https://www.neuronpedia.org/gemma-2-2b/20-gemmascope-transcoder-16k/12997
+base,other,16,2900,123,code and configuration snippets with attributes for various systems,https://www.neuronpedia.org/gemma-2-2b/16-gemmascope-transcoder-16k/2900
+base_v3,geometry,0,14217,16,words with a positive valence and also identifies different sides in a political discussion,https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/14217
+base_v3,geometry,0,11224,16,"the word ""sides,"" potentially in the context of opposing viewpoints or groups",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/11224
+base_v3,geometry,0,8254,12,the word 'sides',https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/8254
+base_v3,geometry,0,13329,12,"mentions of flat shapes with measurable, geometric sides.",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/13329
+base_v3,geometry,1,161,11, technical descriptions of geometric objects and their properties,https://www.neuronpedia.org/gemma-2-2b/1-gemmascope-transcoder-16k/161
+base_v3,boolean-logic,4,12613,180, words and phrases that have to do with truth,https://www.neuronpedia.org/gemma-2-2b/4-gemmascope-transcoder-16k/12613
+base_v3,boolean-logic,2,1499,180,"the boolean value ""True""",https://www.neuronpedia.org/gemma-2-2b/2-gemmascope-transcoder-16k/1499
+base_v3,boolean-logic,24,4640,90, text indicating assertions of truth or falsity,https://www.neuronpedia.org/gemma-2-2b/24-gemmascope-transcoder-16k/4640
+base_v3,boolean-logic,17,11405,90,false,https://www.neuronpedia.org/gemma-2-2b/17-gemmascope-transcoder-16k/11405
+base_v3,boolean-logic,1,11171,90, boolean values,https://www.neuronpedia.org/gemma-2-2b/1-gemmascope-transcoder-16k/11171
+base_v3,boolean-logic,18,2940,90, clauses expressing an opinion or whether something is true,https://www.neuronpedia.org/gemma-2-2b/18-gemmascope-transcoder-16k/2940
+base_v3,boolean-logic,3,16288,90,"the Boolean value ""false"" in code",https://www.neuronpedia.org/gemma-2-2b/3-gemmascope-transcoder-16k/16288
+base_v3,boolean-logic,1,14349,90,"boolean values like ""true"" and ""false""",https://www.neuronpedia.org/gemma-2-2b/1-gemmascope-transcoder-16k/14349
+base_v3,boolean-logic,2,13635,90,"the word ""false"" and ""boolean"" in code snippets or logic statements",https://www.neuronpedia.org/gemma-2-2b/2-gemmascope-transcoder-16k/13635
+base_v3,boolean-logic,6,14586,90, declarations of untruthfulness,https://www.neuronpedia.org/gemma-2-2b/6-gemmascope-transcoder-16k/14586
+base_v3,math-general,0,6051,178,"periods, spaces, and the number 1",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/6051
+base_v3,math-general,22,5015,90, mathematical equations and calculations,https://www.neuronpedia.org/gemma-2-2b/22-gemmascope-transcoder-16k/5015
+base_v3,math-general,24,1764,90, mathematical equations and expressions,https://www.neuronpedia.org/gemma-2-2b/24-gemmascope-transcoder-16k/1764
+base_v3,math-general,20,9550,90, symbolic math equations and expressions with derivatives and remainders,https://www.neuronpedia.org/gemma-2-2b/20-gemmascope-transcoder-16k/9550
+base_v3,math-general,25,4882,90," math problems and related terms like ""derivative"" and ""term""",https://www.neuronpedia.org/gemma-2-2b/25-gemmascope-transcoder-16k/4882
+base_v3,math-general,23,5188,90,mathematical and academic references and structures,https://www.neuronpedia.org/gemma-2-2b/23-gemmascope-transcoder-16k/5188
+base_v3,math-general,16,10288,90, question prompts that have numerical or mathematical components,https://www.neuronpedia.org/gemma-2-2b/16-gemmascope-transcoder-16k/10288
+base_v3,math-general,21,2997,90," mathematical calculations including ""prime factors"" and ""remainder""",https://www.neuronpedia.org/gemma-2-2b/21-gemmascope-transcoder-16k/2997
+base_v3,math-general,24,13323,90, mathematical formulas and references to them,https://www.neuronpedia.org/gemma-2-2b/24-gemmascope-transcoder-16k/13323
+base_v3,math-general,20,11619,87," mathematical publications, academic journals, and authors in the field, also paying attention to the structure and formatting typical to citations.",https://www.neuronpedia.org/gemma-2-2b/20-gemmascope-transcoder-16k/11619
+base_v3,format-template,0,16200,101,code syntax elements,https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/16200
+base_v3,format-template,21,10354,90, statements against a hypothesis,https://www.neuronpedia.org/gemma-2-2b/21-gemmascope-transcoder-16k/10354
+base_v3,format-template,21,10599,90,punctuation,https://www.neuronpedia.org/gemma-2-2b/21-gemmascope-transcoder-16k/10599
+base_v3,format-template,24,6127,60," questions and related words involving right and wrong, correctness, and procedures",https://www.neuronpedia.org/gemma-2-2b/24-gemmascope-transcoder-16k/6127
+base_v3,format-template,0,16229,12," the word ""statements""",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/16229
+base_v3,format-template,1,11660,12, legal and political statements and conclusions,https://www.neuronpedia.org/gemma-2-2b/1-gemmascope-transcoder-16k/11660
+base_v3,format-template,24,13277,11, words related to questions and requests,https://www.neuronpedia.org/gemma-2-2b/24-gemmascope-transcoder-16k/13277
+base_v3,format-template,16,14449,10, questions,https://www.neuronpedia.org/gemma-2-2b/16-gemmascope-transcoder-16k/14449
+base_v3,format-template,0,12698,4,question-answer pairs (or just questions) and import statements,https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/12698
+base_v3,other,8,6513,192,measurements of accuracy and diagnostic tools,https://www.neuronpedia.org/gemma-2-2b/8-gemmascope-transcoder-16k/6513
+base_v3,other,0,2158,152,"the word ""with""",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/2158
+base_v3,other,23,816,90,"the ends of sentences, especially those expressing sadness, strong opinions or community",https://www.neuronpedia.org/gemma-2-2b/23-gemmascope-transcoder-16k/816
+base_v3,other,15,6349,90, words and phrases that have to do with accuracy and correctness,https://www.neuronpedia.org/gemma-2-2b/15-gemmascope-transcoder-16k/6349
+base_v3,other,24,5999,90," language related to institutions, negative situations, the internet, and programming languages",https://www.neuronpedia.org/gemma-2-2b/24-gemmascope-transcoder-16k/5999
+base_v3,other,19,3304,90,"the word ""lied"" and words related to it",https://www.neuronpedia.org/gemma-2-2b/19-gemmascope-transcoder-16k/3304
+base_v3,other,0,1903,78,"instances of sentences starting with ""The""",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/1903
+base_v3,other,18,11320,78,"parentheses, brackets, and structured form completion requests",https://www.neuronpedia.org/gemma-2-2b/18-gemmascope-transcoder-16k/11320
+base_v3,other,20,12997,66,"code snippets, tags, and keywords from various programming languages",https://www.neuronpedia.org/gemma-2-2b/20-gemmascope-transcoder-16k/12997
+base_v3,other,0,3255,54," the word ""and""",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/3255
 lora_l1,geometry,1,161,99, technical descriptions of geometric objects and their properties,https://www.neuronpedia.org/gemma-2-2b/1-gemmascope-transcoder-16k/161
 lora_l1,geometry,0,14217,57,words with a positive valence and also identifies different sides in a political discussion,https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/14217
 lora_l1,geometry,0,11224,55,"the word ""sides,"" potentially in the context of opposing viewpoints or groups",https://www.neuronpedia.org/gemma-2-2b/0-gemmascope-transcoder-16k/11224

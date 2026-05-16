@@ -1,5 +1,6 @@
 phase,total_appearances,geometry,geometry_%,boolean-logic,boolean-logic_%,language-comparative,language-comparative_%,math-general,math-general_%,format-template,format-template_%,other,other_%
-base,7950,333,4.2,1397,17.6,128,1.6,1949,24.5,1274,16.0,2869,36.1
+base,15000,636,4.2,2569,17.1,241,1.6,3647,24.3,2429,16.2,5478,36.5
+base_v3,4500,67,1.5,1404,31.2,0,0.0,1265,28.1,390,8.7,1374,30.5
 lora_l1,15000,437,2.9,3151,21.0,162,1.1,3412,22.7,1771,11.8,6067,40.4
 lora_l2,15000,338,2.3,3236,21.6,226,1.5,3179,21.2,2074,13.8,5947,39.6
 lora_l3_tri_num,15000,674,4.5,1677,11.2,139,0.9,6040,40.3,844,5.6,5626,37.5

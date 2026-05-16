@@ -8014,5 +8014,45 @@
     "top_tokens": [],
     "fetched_at": "2026-05-16T08:59:48.589614+00:00",
     "category": "other"
+  },
+  "4_1394": {
+    "layer": 4,
+    "feat_idx": 1394,
+    "label": " the literal `false` and words related to truthfulness or negation",
+    "top_tokens": [],
+    "fetched_at": "2026-05-16T12:31:57.022608+00:00",
+    "category": "boolean-logic"
+  },
+  "6_14586": {
+    "layer": 6,
+    "feat_idx": 14586,
+    "label": " declarations of untruthfulness",
+    "top_tokens": [],
+    "fetched_at": "2026-05-16T12:31:58.762854+00:00",
+    "category": "boolean-logic"
+  },
+  "4_4492": {
+    "layer": 4,
+    "feat_idx": 4492,
+    "label": "negations in various languages",
+    "top_tokens": [],
+    "fetched_at": "2026-05-16T13:34:12.343788+00:00",
+    "category": "other"
+  },
+  "7_13908": {
+    "layer": 7,
+    "feat_idx": 13908,
+    "label": " mentions that something is true",
+    "top_tokens": [],
+    "fetched_at": "2026-05-16T13:34:14.049586+00:00",
+    "category": "boolean-logic"
+  },
+  "0_1426": {
+    "layer": 0,
+    "feat_idx": 1426,
+    "label": " text written in non-natural language such as variable names or formatting tags, especially those including the number 2",
+    "top_tokens": [],
+    "fetched_at": "2026-05-16T13:34:15.769270+00:00",
+    "category": "math-general"
   }
 }
